@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>餐厅列表页面</title>
+
+    <link rel="stylesheet" href="/css/bootstrap.css">
+
+    <script type="text/javascript" src="/js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.js"></script>
+</head>
+<body>
+
+<div class="container-fluid">
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">个人页面</a>
+            </div>
+            <div>
+                <ul class="nav navbar-nav">
+                    <li><a href="/user/reslist">查看餐厅列表</a></li>
+                    <li><a href="/user/info">查看个人信息</a></li>
+                    <li><a href="/user/modify">修改个人信息</a></li>
+                    <li></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/user/logout">退出登录</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <button class="btn btn-default" id="refresh">刷新餐厅列表</button>
+
+    <table class="table table-bordered table-hover">
+        <thead>
+        <tr>
+            <th>餐厅名称</th>
+            <th>餐厅类型</th>
+            <th>餐厅地址</th>
+        </tr>
+        </thead>
+        <tbody class="table-striped" id="reslist">
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#refresh").click(function () {
+            $.ajax({
+                type:"get",
+                url:"/user/refreshres",
+                async:false,
+                data:{},
+                dataType:"json",
+                success:function (result) {
+                    var str = "";
+                    $.each(result,function (index,item) {
+                        str +="<tr class='res'><td class='name'>"+item.name+"</td>" +
+                            "<td class='type'>"+item.type+"</td>" +
+                            "<td class='address'>"+item.address+"</td></tr>";
+                    });
+                    $("#reslist").html(str);
+                },
+                error:function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                    alert("获取商家列表出错");
+                }
+            })
+        });
+
+        $("#refresh").trigger("click");
+
+    });
+    
+    $(document).on("click","tr.res",function () {
+        var res = {
+            name:$(this).children("td.name").text(),
+            type:$(this).children("td.type").text(),
+            address:$(this).children("td.address").text()
+        };
+        $.ajax({
+            type:"post",
+            url:"/user/save",
+            contentType:"application/json",
+            data:JSON.stringify(res),
+            success:function (result) {
+                if(result === "存储session成功"){
+                    window.location.href = "/user/prolist";
+                }
+            },
+            error:function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
+                alert("跳转商品列表出错");
+            }
+        })
+    })
+</script>

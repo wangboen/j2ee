@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wbe.j2ee.dao.RestaurantDao">
+
+
+    <select id="Login" resultType="Restaurant">
+        select * from restaurant where UUID=#{UUID}
+    </select>
+
+    <select id="selectByName" parameterType="Restaurant" resultType="Restaurant">
+        select * from restaurant where name=#{name}
+    </select>
+
+    <insert id="Register" parameterType="Restaurant" >
+        insert into restaurant ( UUID ) values (#{UUID,jdbcType=VARCHAR})
+    </insert>
+
+    <!--修改餐厅信息，需要审批-->
+    <update id="UpdateRes" parameterType="Restaurant">
+        update restaurant set name=#{name},address=#{address},type=#{type},status=0 where UUID=#{UUID}
+    </update>
+    
+    <select id="getResList0" resultType="Restaurant">
+        select * from restaurant where status=0 and name!=''
+    </select>
+
+    <select id="getResList1" resultType="Restaurant">
+        select * from restaurant where status=1 and name!=''
+    </select>
+
+    <update id="Confirm" parameterType="Restaurant">
+        update restaurant set status=1 where id=#{id}
+    </update>
+
+    <update id="confirm1" parameterType="map">
+        update restaurant set account=account+#{total} where UUID=#{uuid}
+    </update>
+
+    <select id="search" parameterType="String" resultType="Restaurant">
+        select * from restaurant where address like concat('%',#{address},'%') and status=1
+    </select>
+</mapper>
+    
+    

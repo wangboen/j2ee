@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wbe.j2ee.dao.UserDao" >
+
+    <!--登录,根据 status=1 进行查询-->
+    <select id="login" resultType="User" >
+      select * from user where username=#{username} and password=#{password} and status=1
+    </select>
+
+    <!--注册用户-->
+    <insert id="register" parameterType="User" >
+        insert into user ( username, password,useremail,status,code)
+        values (#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{useremail,jdbcType=VARCHAR},#{status,jdbcType=INTEGER},#{code,jdbcType=INTEGER})
+    </insert>
+
+    <!--根据激活码code查询用户-->
+    <select id="checkCode" parameterType="String" resultType="User">
+        select * from user where code = #{code}
+    </select>
+
+    <!--激活账户，修改用户状态-->
+    <update id="updateUserStatus" parameterType="User">
+        update user set status=1,code=null where id=#{id}
+    </update>
+
+    <!--修改个人信息-->
+    <update id="modify" parameterType="User">
+        update user set username=#{username},password=#{password},phone=#{phone},address1=#{address1},address2=#{address2},address3=#{address3} where id=#{id}
+    </update>
+
+    <!--注销账户，但不删除-->
+    <update id="delete" parameterType="User">
+        update user set status=2 where id=#{id}
+    </update>
+
+    <update id="pay1" parameterType="Map">
+        update user set account=account-#{total} where id=#{userid}
+    </update>
+
+    <update id="pay2" parameterType="float">
+        update user set account=account+#{total} where username='manager'
+    </update>
+
+    <update id="confirm1" parameterType="float">
+        update user set account=account-#(total) where username='manager'
+    </update>
+
+    <select id="test" parameterType="Map" resultType="User">
+        select * from user where id=#{userid};
+    </select>
+</mapper>
+    
+    

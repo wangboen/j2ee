@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>个人信息</title>
+
+    <link rel="stylesheet" href="/css/bootstrap.css">
+
+    <script type="text/javascript" src="/js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.js"></script>
+</head>
+<body>
+
+    <div class="container-fluid">
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">个人页面</a>
+                </div>
+                <div>
+                    <ul class="nav navbar-nav">
+                        <li><a href="/user/reslist">查看餐厅列表</a></li>
+                        <li><a href="/user/info">查看个人信息</a></li>
+                        <li><a href="/user/modify">修改个人信息</a></li>
+                        <li></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="/user/logout">退出登录</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <h3 th:text="'userid:' + ${session.userid}"></h3>
+        <h3 th:text="'username:' + ${session.username}"></h3>
+        <h3 th:text="'useremail:' + ${session.useremail}"></h3>
+        <h3 th:text="'phone:' + ${session.phone}"></h3>
+        <h3 th:text="'address1:' + ${session.address1}"></h3>
+        <h3 th:text="'address2:' + ${session.address2}"></h3>
+        <h3 th:text="'address3:' + ${session.address3}"></h3>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>待审批餐厅列表页面</title>
+
+    <link rel="stylesheet" href="/css/bootstrap.css">
+
+    <script type="text/javascript" src="/js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.js"></script>
+</head>
+<body>
+
+    <div class="container-fluid">
+        <button class="btn btn-default" id="refresh">刷新待审批的餐厅列表</button>
+
+        <table class="table table-bordered table-hover">
+            <thead>
+            <tr>
+                <th>id</th>
+                <th>uuid</th>
+                <th>餐厅名</th>
+                <th>地址</th>
+                <th>种类</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody class="table-striped" id="reslist">
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("button#refresh").click(function () {
+            $.ajax({
+                type:"get",
+                url:"/manage/refresh",
+                async:false,
+                data:{},
+                dataType:"json",
+                success:function (result) {
+                    var str = "";
+                    $.each(result, function(index, item){
+                        str += "<tr><td class='id'>"+item.id+"</td>" +
+                            "<td class='UUID'>"+item.uuid+ "</td>" +
+                            "<td class='name'>"+item.name+"</td>" +
+                            "<td class='address'>"+item.address+"</td>" +
+                            "<td class='type'>"+item.type+"</td>" +
+                            "<td class='status'>"+item.status+"</td>"+
+                            "<td><button class='btn btn-default confirm'>确认</button></td></tr>";
+                    });
+                    $("#reslist").html(str);
+                }
+            })
+        })
+
+        $("button#refresh").trigger("click");
+    });
+
+    $(document).on("click",".confirm",function () {
+        var parent = $(this).parents("tr");
+        var restaurant = {
+            id:parent.children("td.id").html(),
+            UUID:parent.children("td.UUID").html(),
+            name:parent.children("td.name").html(),
+            address:parent.children("td.address").html(),
+            type:parent.children("td.type").html(),
+            status:parent.children("td.status").html()
+        };
+        console.log(restaurant);
+        $.ajax({
+            type:'put',
+            url:'/manage/confirm',
+            contentType:"application/json",
+            data:JSON.stringify(restaurant),
+            success:function (result) {
+                $("#refresh").trigger("click");
+                alert("success");
+            },
+            error:function (jqXHR, textStatus, errorThrown) {
+                alert(XMLHttpRequest.status);
+                alert(XMLHttpRequest.readyState);
+                alert(textStatus);
+            }
+        })
+    })
+</script>

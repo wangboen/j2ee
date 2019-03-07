@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>修改餐厅信息</title>
+
+    <link rel="stylesheet" href="/css/bootstrap.css">
+
+    <script type="text/javascript" src="/js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.js"></script>
+</head>
+<body>
+
+<div class="container-fluid">
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">餐厅页面</a>
+            </div>
+            <div>
+                <ul class="nav navbar-nav">
+                    <li><a href="/res/release">发布商品</a></li>
+                    <li><a href="/res/info">查看餐厅信息</a></li>
+                    <li><a href="/res/modify">修改餐厅信息</a></li>
+                    <li></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/res/logout">退出登录</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <form class="form-horizontal">
+        <div class="form-group">
+            <label for="name" class="col-sm-2 control-label">餐厅名：</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" id="name" placeholder="餐厅名">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="address" class="col-sm-2 control-label">地址：</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" id="address" placeholder="地址">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="type" class="col-sm-2 control-label">类型：</label>
+            <div class="col-sm-6">
+                <input type="text" class="form-control" id="type" placeholder="类型">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="button" class="btn btn-default" id="modify">确认修改</button>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+</body>
+</html>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("button#modify").click(function () {
+            var restaurant = {
+                name:$("input#name").val(),
+                address:$("input#address").val(),
+                type:$("input#type").val()
+            };
+            $.ajax({
+                type:"post",
+                url:"/res/modifyRes",
+                contentType:"application/json",
+                data:JSON.stringify(restaurant),
+                success:function (result) {
+                    alert(result);
+                    if (result === "修改成功"){
+                        window.location.href = "/res/info";
+                    }
+                },
+                error:function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                    alert("网络连接错误");
+                }
+            })
+        })
+    })
+</script>

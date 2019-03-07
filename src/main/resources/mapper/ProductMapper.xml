@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wbe.j2ee.dao.ProductDao">
+
+    <!--添加商品-->
+    <insert id="Add" parameterType="Product">
+        insert into product (restaurantUUID,name,type,cost,date) values (#{restaurantUUID},#{name},#{type},#{cost},#{date})
+    </insert>
+
+    <update id="Update" parameterType="Product">
+        update product set number=#{number},date=#{date},cost=#{cost},type=#{type} where restaurantUUID=#{restaurantUUID} and name=#{name}
+    </update>
+
+    <!--根据restaurantUUID获取商品列表-->
+    <select id="getProList" parameterType="String" resultType="Product">
+        select * from product where restaurantUUID=#{resuuid,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectByName" parameterType="String" resultType="Product">
+        select * from product where restaurantUUID=#{restaurantUUID} and name=#{name}
+    </select>
+
+
+</mapper>

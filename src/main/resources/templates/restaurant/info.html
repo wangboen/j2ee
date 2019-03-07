@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>餐厅信息</title>
+
+    <link rel="stylesheet" href="/css/bootstrap.css">
+
+    <script type="text/javascript" src="/js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.js"></script>
+</head>
+<body>
+
+<div class="container-fluid">
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">餐厅页面</a>
+            </div>
+            <div>
+                <ul class="nav navbar-nav">
+                    <li><a href="/res/release">发布商品</a></li>
+                    <li><a href="/res/info">查看餐厅信息</a></li>
+                    <li><a href="/res/modify">修改餐厅信息</a></li>
+                    <li></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/res/logout">退出登录</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <h3 th:text="'uuid:' + ${session.uuid}"></h3>
+    <h3 th:text="'name:' + ${session.name}"></h3>
+    <h3 th:text="'address:' + ${session.address}"></h3>
+    <h3 th:text="'type:' + ${session.type}"></h3>
+    <h3 th:text="'status:' + ${session.status}"></h3>
+</div>
+
+</body>
+</html>

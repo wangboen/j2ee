@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>餐厅商品页面</title>
+
+    <link rel="stylesheet" href="/css/bootstrap.css">
+
+    <script type="text/javascript" src="/js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.js"></script>
+</head>
+<body>
+
+<div class="container-fluid">
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">个人页面</a>
+            </div>
+            <div>
+                <ul class="nav navbar-nav">
+                    <li><a href="/user/reslist">查看餐厅列表</a></li>
+                    <li><a href="/user/info">查看个人信息</a></li>
+                    <li><a href="/user/modify">修改个人信息</a></li>
+                    <li></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/user/logout">退出登录</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <button class="btn btn-default" id="refresh">刷新商品列表</button>
+
+    <table class="table table-bordered table-hover" id="table_list">
+        <thead>
+        <tr>
+            <th>商品名</th>
+            <th>种类</th>
+            <th>单价</th>
+            <th>剩余数量</th>
+            <th>数量</th>
+            <th>小计</th>
+        </tr>
+        </thead>
+        <tbody class="table-striped" id="list">
+        </tbody>
+    </table>
+
+</div>
+
+<div class="modal fade" id="shopping" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">购物车</h4>
+            </div>
+            <div class="modal-body">
+                <span>
+                    <button class="btn btn-default" id="refresh_shopping">刷新购物车列表</button>
+                    <span class="text-right timer"></span>
+                </span>
+
+                <table class="table table-bordered table-hover" id="shopping_table">
+                    <thead>
+                    <tr>
+                        <th>商品名</th>
+                        <th>单价</th>
+                        <th>数量</th>
+                        <th>小计</th>
+                    </tr>
+                    </thead>
+                    <tbody class="table-striped" id="shopping_list">
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="cancel">取消订单</button>
+                <button type="button" class="btn btn-primary" id="pay">结算订单</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+</body>
+</html>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#refresh").click(function () {
+            $.ajax({
+                type:"get",
+                url:"/user/refreshpro",
+                async:true,
+                data:{},
+                dataType:"json",
+                success:function (result) {
+                    var str = "";
+                    $.each(result,function (index,item) {
+                        str += "<tr id='product'>" +
+                            "<td class='name'>"+item.name+"</td>" +
+                            "<td class='type'>"+item.type+"</td>" +
+                            "<td class='cost'>"+item.cost+"</td>" +
+                            "<td class='remaining'>"+item.number+"</td>" +
+                            "<td class='number'>" +
+                            "<button type='button' class='btn btn-default sub'>-</button>" +
+                            "<span class='num'>0</span>" +
+                            "<button type='button' class='btn btn-default plus'>+</button>" +
+                            "</td>" +
+                            "<td class='subtotal'>0.00</td>" +
+                            "</tr>"
+                    });
+                    str +="<tr id='sum'>" +
+                        "<td id='sum1' colspan='4'><span>商品总计<span id='total'>0.00</span>元</span></td>" +
+                        "<td id='sum2'><button class='btn btn-default' data-toggle='modal' data-target='#shopping' id='order'>下单</button></td>" +
+                        "</tr>";
+
+                    $("#list").html(str);
+                },
+                error:function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                    alert("获取商品列表出错");
+                }
+            })
+        });
+
+        $("#refresh").trigger("click");
+    });
+
+    $(document).on("click","button.plus",function () {
+        var num = parseInt($(this).parents("td.number").children("span.num").text());
+        var remaining = parseInt($(this).parents("tr").children("td.remaining").text());
+        if (num<remaining){
+            num++;
+            var cost = parseFloat($(this).parents("tr").children("td.cost").text());
+            var subtotal = num*cost;
+            var sum = parseFloat($(this).parents("tbody").children("tr#sum").children("td#sum1").children("span").children("span#total").text());
+            subtotal = subtotal.toFixed(2);
+            sum += cost;
+            var total = sum.toFixed(2);
+            $(this).parents("td.number").children("span.num").html(num);
+            $(this).parents("tr").children("td.subtotal").html(subtotal);
+            $(this).parents("tbody").children("tr#sum").children("td#sum1").children("span").children("span#total").html(total);
+        }
+    });
+
+    $(document).on("click","button.sub",function () {
+        var num = parseInt($(this).parents("td.number").children("span.num").text());
+        if(num>0){
+            num--;
+            var cost = parseFloat($(this).parents("tr").children("td.cost").text());
+            var subtotal = num*cost;
+            var sum = parseFloat($(this).parents("tbody").children("tr#sum").children("td#sum1").children("span").children("span#total").text());
+            subtotal = subtotal.toFixed(2);
+            sum -= cost;
+            var total = sum.toFixed(2);
+            $(this).parents("td.number").children("span.num").html(num);
+            $(this).parents("tr").children("td.subtotal").html(subtotal);
+            $(this).parents("tbody").children("tr#sum").children("td#sum1").children("span").children("span#total").html(total);
+        }
+    });
+
+    var time = 15;
+    $(document).on("click","button#order",function () {
+
+        var str = "";
+        $("tr#product").each(function () {
+            var number = parseInt($(this).children("td.number").children("span.num").text());
+            if (number > 0){
+                var name = $(this).children("td.name").text();
+                var cost = $(this).children("td.cost").text();
+                var subtotal = $(this).children("td.subtotal").text();
+                str += "<tr id='shopping_product'>" +
+                    "<td class='name'>"+name+"</td>" +
+                    "<td class='cost'>"+cost+"</td>" +
+                    "<td class='number'>"+number+"</td>" +
+                    "<td class='subtotal'>"+subtotal+"</td>" +
+                    "</tr>";
+            }
+        });
+        var total = $(this).parents("tr#sum").children("td#sum1").children("span").children("span#total").text();
+        str += "<tr><td colspan='4'>" +
+            "<span>商品总计<span>"+total+"</span>元</span>" +
+            "</td></tr>";
+        $("#shopping_list").html(str);
+
+        var timer = setInterval(function(){
+            if ( time >= 1) {
+                time -= 1;
+                var minute = parseInt( time / 60 );
+                var second = parseInt( time % 60 );
+                $('.timer').html( minute+':'+second );
+            } else {
+                $("#cancel").trigger("click");
+                clearInterval(timer);
+            }
+        }, 1000);
+    });
+
+    $(document).on("click","button#cancel",function () {
+        time = 15;
+    });
+    
+    $(document).on("click","button#pay",function () {
+        var productlist = [];
+        $("tr#shopping_product").each(function () {
+            var product = {
+                name:$(this).children("td.name").text(),
+                cost:$(this).children("td.cost").text(),
+                number:$(this).children("td.number").text(),
+                subtotal:$(this).children("td.subtotal").text()
+            };
+            productlist.push(product);
+        });
+
+        $.ajax({
+            type:"post",
+            url:"/user/pay",
+            contentType:"application/json",
+            data:JSON.stringify(productlist),
+            success:function (result) {
+                alert(result);
+                window.location.href = "/user/order";
+            },
+            error:function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
+                alert("向后台提交订单出错");
+            }
+        })
+    })
+
+</script>
