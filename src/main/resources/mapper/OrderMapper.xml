@@ -3,21 +3,31 @@
 
 <mapper namespace="com.wbe.j2ee.dao.OrderDao">
 
-    <insert id="add" parameterType="Order">
-        insert into `order` (orderid,userid,restaurantuuid,name,number,cost,subtotal) values (#{orderid},#{userid},#{restaurantuuid},#{name},#{number},#{cost},#{subtotal})
-    </insert>
+<!--添加订单信息-->
+<insert id="add" parameterType="Order">
+    insert into `order` (orderid,userid,restaurantid,productid,number,cost,subtotal) values (#{orderid},#{userid},#{restaurantid},#{productid},#{number},#{cost},#{subtotal})
+</insert>
 
-    <select id="max" resultType="Integer">
-        select max(orderid) from `order`
-    </select>
+<!--获取最新的订单-->
+<select id="max" resultType="Integer">
+    select max(orderid) from `order`
+</select>
 
-    <select id="selectById" parameterType="int" resultType="Order">
-        select * from `order` where orderid=#{orderid}
-    </select>
+<!--根据orderid查找订单信息-->
+<select id="selectById" parameterType="int" resultType="Order">
+    select * from `order` where orderid=#{orderid}
+</select>
 
-    <update id="confirm" parameterType="Order">
-        update `order` set status=2 where orderid=#{orderid}
-    </update>
+<!--确认订单送达-->
+<update id="confirm" parameterType="int">
+    update `order` set status=1 where orderid=#{orderid}
+</update>
+
+<!--取消订单-->
+<update id="cancel" parameterType="int">
+    update `order` set status=2 where orderid=#{orderid}
+</update>
+
 </mapper>
     
     

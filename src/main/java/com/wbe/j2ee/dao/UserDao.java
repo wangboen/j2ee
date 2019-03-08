@@ -3,60 +3,50 @@ package com.wbe.j2ee.dao;
 import com.wbe.j2ee.entity.User;
 import org.springframework.stereotype.Repository;
 
-import javax.jws.soap.SOAPBinding;
-import java.util.Map;
-
 @Repository
 public interface UserDao {
     /**
-     * 登录
-     * @param user 登陆的用户名密码
-     * @return 该用户的相关信息
+     * 用户登录，根据username,password,status进行查询，返回查找到的账户
      */
     User login(User user);
 
     /**
-     * 用户注册
-     * @param user 要注册的邮箱账号
+     * 用户注册，status设置为0，存储生成的code验证码
      */
     void register(User user);
 
     /**
-     * 根据激活码查询用户，之后再进行修改用户状态
-     * @param code 生成的uuid邮箱验证码
-     * @return 判断用户是否提交开户申请
+     * 根据code激活码查询账户，返回账户
      */
     User checkCode(String code);
 
     /**
-     * 激活账户，修改用户状态为"1"
-     * @param user 要激活的用户的uuid
+     * 激活账户，status设置为1，清除验证码code
      */
-    void updateUserStatus(User user);
+    void updateUserStatus1(User user);
 
     /**
-     * 修改用户信息
-     * @param user 修改后的用户相关信息
+     * 注销账户，status设置为2
+     */
+    void updateUserStatus2(User user);
+
+    /**
+     * 修改个人信息
      */
     void modify(User user);
 
     /**
-     * 注销账户，修改用户状态为"2"
-     * @param user 要修改的用户id
+     * 避免出现相同名字
      */
-    void delete(User user);
+    User selectByName(String username);
 
     /**
-     * 预付给经理
-     * @param map
+     * 避免出现已被使用过的邮箱
      */
-    void pay1(Map<String,Object> map);
+    User selectByEmail(String useremail);
 
     /**
-     * 经理得到预付款
-     * @param total 预付款总额
+     * 根据userid查询user
      */
-    void pay2(float total);
-
-    void confirm(float total);
+    User selectById(int userid);
 }

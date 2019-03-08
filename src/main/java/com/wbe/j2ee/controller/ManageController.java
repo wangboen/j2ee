@@ -25,13 +25,12 @@ public class ManageController {
     @ResponseBody
     @RequestMapping(value = "/refresh")
     public List<Restaurant> manage(){
-        List<Restaurant> restaurantList = resService.getResList0();
-        return restaurantList;
+        return resService.getResList0();
     }
 
     @PutMapping(value = "/confirm")
     public String confirm(@RequestBody Restaurant restaurant){
-        resService.confirm(restaurant);
+        resService.confirm(restaurant.getRestaurantid());
         return "manage/list";
     }
 }

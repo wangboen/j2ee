@@ -33,9 +33,9 @@
 
     <form class="form-horizontal">
         <div class="form-group">
-            <label for="name" class="col-sm-2 control-label">餐厅名：</label>
+            <label for="restaurantname" class="col-sm-2 control-label">餐厅名：</label>
             <div class="col-sm-6">
-                <input type="text" class="form-control" id="name" placeholder="餐厅名">
+                <input type="text" class="form-control" id="restaurantname" placeholder="餐厅名">
             </div>
         </div>
         <div class="form-group">
@@ -66,7 +66,7 @@
     $(document).ready(function () {
         $("button#modify").click(function () {
             var restaurant = {
-                name:$("input#name").val(),
+                restaurantname:$("input#restaurantname").val(),
                 address:$("input#address").val(),
                 type:$("input#type").val()
             };

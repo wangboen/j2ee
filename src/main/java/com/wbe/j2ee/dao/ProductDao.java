@@ -2,25 +2,28 @@ package com.wbe.j2ee.dao;
 
 import com.wbe.j2ee.entity.Product;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface ProductDao {
     /**
      * 添加商品
-     * @param product 要添加的商品的相关信息
      */
-    void Add(Product product);
-
-    void Update(Product product);
+    void add(Product product);
 
     /**
-     * 根据餐厅UUID获取商品列表
-     * @param resuuid 餐厅UUID
-     * @return 商品列表
+     * 更新商品类型，数量，价格，同步更新时间
      */
-    List<Product> getProList(String resuuid);
+    void update(Product product);
 
+    /**
+     * 根据restaurantid获取商品列表
+     */
+    List<Product> getProList(int restaurantid);
+
+    /**
+     * 根据restaurantid和productname获取商品信息
+     */
     Product selectByName(Product product);
 }

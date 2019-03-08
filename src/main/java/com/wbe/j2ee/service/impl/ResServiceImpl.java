@@ -9,92 +9,76 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
 @Transactional
 public class ResServiceImpl implements ResService {
-    @Autowired
-    private RestaurantDao restaurantDao;
+    private final RestaurantDao restaurantDao;
 
-    /**
-     * 餐厅登录
-     * @param restaurant
-     */
+    @Autowired
+    public ResServiceImpl(RestaurantDao restaurantDao) {
+        this.restaurantDao = restaurantDao;
+    }
+
     @Override
-    public Restaurant login(Restaurant restaurant) {
-        Restaurant restaurant1 = restaurantDao.Login(restaurant);
-        if (restaurant1 !=null){
-            return restaurant1;
-        }
+    public Restaurant selectByName(String restaurantname) {
+        Restaurant restaurant = restaurantDao.selectByName(restaurantname);
+        if (restaurant != null) return restaurant;
         return null;
     }
 
-    /**
-     * 判断修改后的餐厅名是否被占用
-     * @param restaurant 获取修改后的餐厅名
-     * @return 返回重名的餐厅相关信息
-     */
     @Override
-    public Restaurant selectByName(Restaurant restaurant) {
-        return restaurantDao.selectByName(restaurant);
+    public Restaurant selectById(int restaurantid) {
+        Restaurant restaurant = restaurantDao.selectById(restaurantid);
+        if (restaurant != null) return restaurant;
+        return null;
     }
 
-    /**
-     * 餐厅注册
-     * @return Restarant
-     */
+    @Override
+    public Restaurant login(String restaurantUUID) {
+        Restaurant restaurant = restaurantDao.login(restaurantUUID);
+        if (restaurant != null) return restaurant;
+        return null;
+    }
+
     @Override
     public Restaurant register() {
-        String uuid = UUID.randomUUID().toString();
-        uuid = uuid.substring(0,7);
-        Restaurant restaurant = new Restaurant();
-        restaurant.setUUID(uuid);
-        restaurantDao.Register(restaurant);
-        Restaurant restaurant1 = restaurantDao.Login(restaurant);
-        return restaurant1;
+        String restaurantUUID = UUID.randomUUID().toString();
+        restaurantUUID = restaurantUUID.substring(0,7);
+        restaurantDao.register(restaurantUUID);
+        Restaurant restaurant = restaurantDao.login(restaurantUUID);
+        if (restaurant != null) return restaurant;
+        return null;
     }
 
-    /**
-     * 修改餐厅信息
-     * @param restaurant
-     */
     @Override
     public void modify(Restaurant restaurant) {
-        restaurantDao.UpdateRes(restaurant);
-        return;
+        restaurantDao.modify(restaurant);
     }
 
-    /**
-     * 返回所有待审批的餐厅修改信息
-     * @return List<Restaurant>
-     */
     @Override
     public List<Restaurant> getResList0() {
-        return restaurantDao.getResList0();
-    }
-
-    /**
-     * 审批通过餐厅修改信息
-     * @param restaurant
-     */
-    @Override
-    public void confirm(Restaurant restaurant) {
-        restaurantDao.Confirm(restaurant);
-        return;
-    }
-
-    /**
-     * 返回所有通过了审批的餐厅信息
-     * @return List<Restaurant>
-     */
-    @Override
-    public List<Restaurant> getResList1() {
-        return restaurantDao.getResList1();
+        List<Restaurant> restaurantList = restaurantDao.getResList0();
+        if (restaurantList != null) return restaurantList;
+        return null;
     }
 
     @Override
-    public List<Restaurant> search(String address) {
-        return restaurantDao.search(address);
+    public void confirm(int restaurantid) {
+        restaurantDao.confirm(restaurantid);
+    }
+
+    @Override
+    public void pay(Map<String, Object> map) {
+        restaurantDao.pay(map);
+    }
+
+    @Override
+    public List<Restaurant> searchByAdress(String address) {
+        List<Restaurant> restaurantList = restaurantDao.searchByAdress(address);
+        if (restaurantList != null) return restaurantList;
+        return null;
     }
 }

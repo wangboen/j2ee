@@ -1,46 +1,67 @@
 package com.wbe.j2ee.entity;
 
 public class Restaurant {
-    private Integer id;
-    private String UUID;
-    private String name;
+    private int restaurantid;
+    private String restaurantUUID;
+    private String restaurantname;
     private String address;
     private String type;
-    private Integer status = 0;
+    private Float account;
+    private Integer status;
 
-    public int getId() { return id; }
+    public int getRestaurantid() {
+        return restaurantid;
+    }
 
-    public void setId(int id) { this.id = id; }
+    public void setRestaurantid(int restaurantid) {
+        this.restaurantid = restaurantid;
+    }
 
-    public String getUUID() { return UUID; }
+    public String getRestaurantUUID() {
+        return restaurantUUID;
+    }
 
-    public void setUUID(String UUID) { this.UUID = UUID; }
+    public void setRestaurantUUID(String restaurantUUID) {
+        this.restaurantUUID = restaurantUUID;
+    }
 
-    public String getName() { return name; }
+    public String getRestaurantname() {
+        return restaurantname;
+    }
 
-    public void setName(String name) { this.name = name; }
+    public void setRestaurantname(String restaurantname) {
+        this.restaurantname = restaurantname;
+    }
 
-    public String getAddress() { return address; }
+    public String getAddress() {
+        return address;
+    }
 
-    public void setAddress(String address) { this.address = address; }
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
-    public String getType() { return type; }
+    public String getType() {
+        return type;
+    }
 
-    public void setType(String type) { this.type = type; }
+    public void setType(String type) {
+        this.type = type;
+    }
 
-    public int getStatus() { return status; }
+    public Float getAccount() {
+        return account;
+    }
 
-    public void setStatus(int status) { this.status = status; }
+    public void setAccount(Float account) {
+        this.account = account;
+    }
 
-    @Override
-    public String toString() {
-        return "Restaurant{" +
-                "id=" + id +
-                ", UUID='" + UUID + '\'' +
-                ", name='" + name + '\'' +
-                ", address='" + address + '\'' +
-                ", type='" + type + '\'' +
-                ", status=" + status +
-                '}';
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 }

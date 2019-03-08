@@ -2,43 +2,56 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.wbe.j2ee.dao.RestaurantDao">
 
+<!--避免餐厅重名-->
+<select id="selectByName" parameterType="String" resultType="Restaurant">
+    select * from restaurant where restaurantname=#{restaurantname}
+</select>
 
-    <select id="Login" resultType="Restaurant">
-        select * from restaurant where UUID=#{UUID}
-    </select>
+<!--根据restaurantid查询餐厅-->
+<select id="selectById" parameterType="int" resultType="Restaurant">
+    select * from restaurant where restaurantid=#{restaurantid}
+</select>
 
-    <select id="selectByName" parameterType="Restaurant" resultType="Restaurant">
-        select * from restaurant where name=#{name}
-    </select>
+<!--餐厅登录，根据生成的restaurantUUID查找账户-->
+<select id="login" parameterType="String" resultType="Restaurant">
+    select * from restaurant where restaurantUUID=#{restaurantUUID}
+</select>
 
-    <insert id="Register" parameterType="Restaurant" >
-        insert into restaurant ( UUID ) values (#{UUID,jdbcType=VARCHAR})
-    </insert>
+<!--注册餐厅，初始化一个restaurantUUID-->
+<insert id="register" parameterType="String" >
+    insert into restaurant (restaurantUUID) values (#{restaurantUUID})
+</insert>
 
-    <!--修改餐厅信息，需要审批-->
-    <update id="UpdateRes" parameterType="Restaurant">
-        update restaurant set name=#{name},address=#{address},type=#{type},status=0 where UUID=#{UUID}
-    </update>
-    
-    <select id="getResList0" resultType="Restaurant">
-        select * from restaurant where status=0 and name!=''
-    </select>
+<!--修改餐厅信息，status设置为0，需要审批-->
+<update id="modify" parameterType="Restaurant">
+    update restaurant set restaurantname=#{restaurantname},address=#{address},type=#{type},status=0 where restaurantid=#{restaurantid}
+</update>
 
-    <select id="getResList1" resultType="Restaurant">
-        select * from restaurant where status=1 and name!=''
-    </select>
+<!--获取未审批的餐厅列表，status为0-->
+<select id="getResList0" resultType="Restaurant">
+    select * from restaurant where status=0 and restaurantname!=''
+</select>
 
-    <update id="Confirm" parameterType="Restaurant">
-        update restaurant set status=1 where id=#{id}
-    </update>
+<!--获取审批通过正在运营的餐厅列表，status为1-->
+<select id="getResList1" resultType="Restaurant">
+    select * from restaurant where status=1 and restaurantname!=''
+</select>
 
-    <update id="confirm1" parameterType="map">
-        update restaurant set account=account+#{total} where UUID=#{uuid}
-    </update>
+<!--审批通过餐厅修改信息-->
+<update id="confirm" parameterType="int">
+    update restaurant set status=1 where restaurantid=#{restaurantid}
+</update>
 
-    <select id="search" parameterType="String" resultType="Restaurant">
-        select * from restaurant where address like concat('%',#{address},'%') and status=1
-    </select>
+<!--经理将预付款打到餐厅账上-->
+<update id="pay" parameterType="map">
+    update restaurant set account=account+#{total} where restaurantUUID=#{restaurantUUID}
+</update>
+
+<!--根据用户所在地查找附近正在运营的餐厅-->
+<select id="searchByAdress" parameterType="String" resultType="Restaurant">
+    select * from restaurant where address like concat('%',#{address},'%') and status=1
+</select>
+
 </mapper>
     
     

@@ -1,20 +1,21 @@
 package com.wbe.j2ee.entity;
 
 public class Order {
-    private String id;
+    private int id;
     private int orderid;
     private int userid;
-    private String restaurantuuid;
-    private String name;
+    private int restaurantid;
+    private int productid;
     private int number;
     private Float cost;
     private Float subtotal;
+    private int status;
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -34,20 +35,20 @@ public class Order {
         this.userid = userid;
     }
 
-    public String getRestaurantuuid() {
-        return restaurantuuid;
+    public int getRestaurantid() {
+        return restaurantid;
     }
 
-    public void setRestaurantuuid(String restaurantuuid) {
-        this.restaurantuuid = restaurantuuid;
+    public void setRestaurantid(int restaurantid) {
+        this.restaurantid = restaurantid;
     }
 
-    public String getName() {
-        return name;
+    public int getProductid() {
+        return productid;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setProductid(int productid) {
+        this.productid = productid;
     }
 
     public int getNumber() {
@@ -72,5 +73,13 @@ public class Order {
 
     public void setSubtotal(Float subtotal) {
         this.subtotal = subtotal;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

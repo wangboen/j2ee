@@ -22,9 +22,9 @@ public class OrderServiceImpl implements OrderService {
         if (orderDao.max()!=null){
             orderid = orderDao.max()+1;
         }
-        for (int i=0;i<orders.length;i++){
-            orders[i].setOrderid(orderid);
-            orderDao.add(orders[i]);
+        for (Order order : orders) {
+            order.setOrderid(orderid);
+            orderDao.add(order);
         }
     }
 
@@ -36,5 +36,15 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> selectById(int orderid) {
         return orderDao.selectById(orderid);
+    }
+
+    @Override
+    public void confirm(int orderid) {
+        orderDao.confirm(orderid);
+    }
+
+    @Override
+    public void cancel(int orderid) {
+        orderDao.cancel(orderid);
     }
 }

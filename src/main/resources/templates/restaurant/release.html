@@ -33,9 +33,9 @@
 
     <form class="form-horizontal">
         <div class="form-group">
-            <label for="name" class="col-sm-2 control-label">商品名：</label>
+            <label for="productname" class="col-sm-2 control-label">商品名：</label>
             <div class="col-sm-6">
-                <input type="text" class="form-control" id="name" placeholder="商品名">
+                <input type="text" class="form-control" id="productname" placeholder="商品名">
             </div>
         </div>
         <div class="form-group">
@@ -87,7 +87,7 @@
     $(document).ready(function () {
         $("#add").click(function () {
             var product = {
-                name:$("input#name").val(),
+                productname:$("input#productname").val(),
                 type:$("input#type").val(),
                 cost:$("input#cost").val(),
                 number:$("input#number").val()
@@ -100,7 +100,7 @@
                 data:JSON.stringify(product),
                 success:function (result) {
                     if (result === "商品添加成功"){
-                        $("input#name").val("");
+                        $("input#productname").val("");
                         $("input#type").val("");
                         $("input#cost").val("");
                         $("input#number").val("");
@@ -127,7 +127,7 @@
                 success:function (result) {
                     var str = "";
                     $.each(result,function (index,item) {
-                        str += "<tr><td class='name'>"+item.name+"</td>" +
+                        str += "<tr><td class='productname'>"+item.productname+"</td>" +
                             "<td class='type'>"+item.type+"</td>" +
                             "<td class='cost'>"+item.cost+"</td>" +
                             "<td class='number'>"+item.number+"</td></tr>"

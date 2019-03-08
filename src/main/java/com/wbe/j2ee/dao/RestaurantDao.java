@@ -2,57 +2,59 @@ package com.wbe.j2ee.dao;
 
 import com.wbe.j2ee.entity.Restaurant;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Map;
 
 @Repository
 public interface RestaurantDao {
     /**
-     * 登录，根据uuid查询是否存在
-     * @param restaurant 获取输入的uuid
-     * @return 返回uuid所属的餐厅相关信息
+     * 避免餐厅重名
      */
-    Restaurant Login(Restaurant restaurant);
+    Restaurant selectByName(String restaurantname);
 
     /**
-     * 判断修改后的餐厅名是否被占用
-     * @param restaurant 获取修改后的餐厅名
-     * @return 返回重名的餐厅相关信息
+     * 根据restaurantid查询餐厅
      */
-    Restaurant selectByName(Restaurant restaurant);
+    Restaurant selectById(int restaurantid);
 
     /**
-     * 注册
-     * @param restaurant 要注册的餐馆的UUID
+     * 餐厅登录，根据生成的restaurantUUID查找账户
      */
-    void Register(Restaurant restaurant);
+    Restaurant login(String restaurantUUID);
 
     /**
-     * 修改餐厅信息，需要审核
-     * @param restaurant 要修改成的餐厅相关信息
+     * 注册餐厅，初始化一个restaurantUUID
      */
-    void UpdateRes(Restaurant restaurant);
+    void register(String restaurantUUID);
 
     /**
-     * 审批通过餐厅修改信息
-     * @param restaurant 要确认审批通过的餐厅的uuid
+     * 修改餐厅信息，status设置为0，需要审批
      */
-    void Confirm(Restaurant restaurant);
+    void modify(Restaurant restaurant);
 
     /**
-     * 返回所有待审批的餐厅修改信息
-     * @return List<Restaurant>
+     * 获取未审批的餐厅列表，status为0
      */
     List<Restaurant> getResList0();
 
     /**
-     * 返回所有通过了审批的餐厅信息
-     * @return List<Restaurant>
+     * 获取审批通过正在运营的餐厅列表，status为1
      */
     List<Restaurant> getResList1();
 
-    void confirm1(Map<String,Object> map);
+    /**
+     * 审批通过餐厅修改信息
+     */
+    void confirm(int restaurantid);
 
-    List<Restaurant> search(String address);
+    /**
+     * 经理将预付款打到餐厅账上
+     */
+    void pay(Map<String,Object> map);
+
+    /**
+     * 根据用户所在地查找附近正在运营的餐厅
+     * @return
+     */
+    List<Restaurant> searchByAdress(String address);
 }

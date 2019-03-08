@@ -3,23 +3,24 @@
 
 <mapper namespace="com.wbe.j2ee.dao.ProductDao">
 
-    <!--添加商品-->
-    <insert id="Add" parameterType="Product">
-        insert into product (restaurantUUID,name,type,cost,date) values (#{restaurantUUID},#{name},#{type},#{cost},#{date})
-    </insert>
+<!--添加商品-->
+<insert id="add" parameterType="Product">
+    insert into product (restaurantid,productname,type,number,cost,date) values (#{restaurantid},#{productname},#{type},#{number},#{cost},#{date})
+</insert>
 
-    <update id="Update" parameterType="Product">
-        update product set number=#{number},date=#{date},cost=#{cost},type=#{type} where restaurantUUID=#{restaurantUUID} and name=#{name}
-    </update>
+<!--更新商品类型，数量，价格，同步更新时间-->
+<update id="update" parameterType="Product">
+    update product set type=#{type},number=#{number},cost=#{cost},date=#{date} where restaurantid=#{restaurantid} and productname=#{productname}
+</update>
 
-    <!--根据restaurantUUID获取商品列表-->
-    <select id="getProList" parameterType="String" resultType="Product">
-        select * from product where restaurantUUID=#{resuuid,jdbcType=VARCHAR}
-    </select>
+<!--根据restaurantid获取商品列表-->
+<select id="getProList" parameterType="int" resultType="Product">
+    select * from product where restaurantid=#{restaurantid}
+</select>
 
-    <select id="selectByName" parameterType="String" resultType="Product">
-        select * from product where restaurantUUID=#{restaurantUUID} and name=#{name}
-    </select>
-
+<!--根据restaurantid和productname获取商品信息-->
+<select id="selectByName" parameterType="Product" resultType="Product">
+    select * from product where restaurantid=#{restaurantid} and productname=#{productname}
+</select>
 
 </mapper>

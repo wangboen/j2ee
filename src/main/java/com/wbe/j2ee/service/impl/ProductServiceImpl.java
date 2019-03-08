@@ -14,23 +14,27 @@ import java.util.List;
 @Transactional
 public class ProductServiceImpl implements ProductService {
 
+    private final ProductDao productDao;
+
     @Autowired
-    private ProductDao productDao;
+    public ProductServiceImpl(ProductDao productDao) {
+        this.productDao = productDao;
+    }
 
     @Override
     public void add(Product product) {
         Product product1 = productDao.selectByName(product);
-        if(product1!=null){
+        if(product1 != null){
             product.setNumber(product.getNumber()+product1.getNumber());
-            productDao.Update(product);
+            productDao.update(product);
         }else {
-            productDao.Add(product);
+            productDao.add(product);
         }
     }
 
     @Override
-    public List<Product> getProList(String resuuid) {
-        return productDao.getProList(resuuid);
+    public List<Product> getProList(int restaurantid) {
+        return productDao.getProList(restaurantid);
     }
 
     @Override
@@ -38,7 +42,7 @@ public class ProductServiceImpl implements ProductService {
         for (Product product:productList){
             Product product1 = productDao.selectByName(product);
             product1.setNumber(product1.getNumber()-product.getNumber());
-            productDao.Update(product1);
+            productDao.update(product1);
         }
     }
 }

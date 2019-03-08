@@ -61,7 +61,7 @@
                 success:function (result) {
                     var str = "";
                     $.each(result,function (index,item) {
-                        str +="<tr class='res'><td class='name'>"+item.name+"</td>" +
+                        str +="<tr class='res'><td class='restaurantname'>"+item.restaurantname+"</td>" +
                             "<td class='type'>"+item.type+"</td>" +
                             "<td class='address'>"+item.address+"</td></tr>";
                     });
@@ -82,7 +82,7 @@
     
     $(document).on("click","tr.res",function () {
         var res = {
-            name:$(this).children("td.name").text(),
+            name:$(this).children("td.restaurantname").text(),
             type:$(this).children("td.type").text(),
             address:$(this).children("td.address").text()
         };

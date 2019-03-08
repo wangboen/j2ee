@@ -46,9 +46,9 @@
                 success:function (result) {
                     var str = "";
                     $.each(result, function(index, item){
-                        str += "<tr><td class='id'>"+item.id+"</td>" +
-                            "<td class='UUID'>"+item.uuid+ "</td>" +
-                            "<td class='name'>"+item.name+"</td>" +
+                        str += "<tr><td class='restaurantid'>"+item.restaurantid+"</td>" +
+                            "<td class='restaurantUUID'>"+item.restaurantUUID+ "</td>" +
+                            "<td class='restaurantname'>"+item.restaurantname+"</td>" +
                             "<td class='address'>"+item.address+"</td>" +
                             "<td class='type'>"+item.type+"</td>" +
                             "<td class='status'>"+item.status+"</td>"+
@@ -65,9 +65,9 @@
     $(document).on("click",".confirm",function () {
         var parent = $(this).parents("tr");
         var restaurant = {
-            id:parent.children("td.id").html(),
-            UUID:parent.children("td.UUID").html(),
-            name:parent.children("td.name").html(),
+            restaurantid:parent.children("td.restaurantid").html(),
+            restaurantUUID:parent.children("td.restaurantUUID").html(),
+            restaurantname:parent.children("td.restaurantname").html(),
             address:parent.children("td.address").html(),
             type:parent.children("td.type").html(),
             status:parent.children("td.status").html()
@@ -80,7 +80,7 @@
             data:JSON.stringify(restaurant),
             success:function (result) {
                 $("#refresh").trigger("click");
-                alert("success");
+                alert("审批成功");
             },
             error:function (jqXHR, textStatus, errorThrown) {
                 alert(XMLHttpRequest.status);
