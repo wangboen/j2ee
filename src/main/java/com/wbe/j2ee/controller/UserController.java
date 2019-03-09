@@ -5,10 +5,7 @@ import com.wbe.j2ee.entity.Order;
 import com.wbe.j2ee.entity.Product;
 import com.wbe.j2ee.entity.Restaurant;
 import com.wbe.j2ee.entity.User;
-import com.wbe.j2ee.service.OrderService;
-import com.wbe.j2ee.service.ProductService;
-import com.wbe.j2ee.service.ResService;
-import com.wbe.j2ee.service.UserService;
+import com.wbe.j2ee.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +16,6 @@ import java.util.*;
 @Controller
 @RequestMapping("/user")
 public class UserController {
-
     private final UserService userService;
 
     private final ResService resService;
@@ -28,12 +24,15 @@ public class UserController {
 
     private final OrderService orderService;
 
+    private final ManagerService managerService;
+
     @Autowired
-    public UserController(UserService userService, ResService resService, ProductService productService, OrderService orderService) {
+    public UserController(UserService userService, ResService resService, ProductService productService, OrderService orderService, ManagerService managerService) {
         this.userService = userService;
         this.resService = resService;
         this.productService = productService;
         this.orderService = orderService;
+        this.managerService = managerService;
     }
 
     /**
@@ -99,7 +98,7 @@ public class UserController {
      */
     @RequestMapping(value = "/prolist")
     public String prolist(HttpSession session) {
-        if (session.getAttribute("userid")!=null && session.getAttribute("restaurantuuid")!=null){
+        if (session.getAttribute("userid")!=null && session.getAttribute("restaurantid")!=null){
             return "user/prolist";
         }
         return "user/error";
@@ -110,8 +109,19 @@ public class UserController {
      */
     @RequestMapping(value = "/order")
     public String order(HttpSession session) {
-        if (session.getAttribute("userid")!=null && session.getAttribute("restaurantuuid")!=null && session.getAttribute("orderid")!=null){
-            return "user/prolist";
+        if (session.getAttribute("userid")!=null && session.getAttribute("restaurantid")!=null && session.getAttribute("orderid")!=null){
+            return "user/order";
+        }
+        return "user/error";
+    }
+
+    /**
+     * 跳转到历史订单页面，需要先登录，即验证session中是否有userid属性
+     */
+    @RequestMapping(value = "/orderlist")
+    public String orderlist(HttpSession session){
+        if (session.getAttribute("userid")!=null){
+            return "user/orderlist";
         }
         return "user/error";
     }
@@ -246,54 +256,125 @@ public class UserController {
         return productService.getProList(resid);
     }
 
-//    /**
-//     * 结算订单，订单状态为已下单1，用户的钱转到经理账上，相关商品库存减对应值
-//     * @return 下单成功
-//     */
-//    @ResponseBody
-//    @PostMapping(value = "/pay")
-//    public String pay(@RequestBody Order[] orderlist,HttpSession session){
-//        int userid = Integer.parseInt(session.getAttribute("userid").toString());
-//        int restaurantid = Integer.parseInt(session.getAttribute("restaurantid").toString());
-//        float total = 0;
-//        List<Product> productList = new ArrayList<>();
-//        for (int i=0;i<orderlist.length;i++){
-//            orderlist[i].setUserid(userid);
-//            orderlist[i].setRestaurantid(restaurantid);
-//            total += Float.parseFloat(orderlist[i].getSubtotal().toString());
-//            Product product = new Product();
-//            product.setRestaurantid(restaurantid);
-//            product.setProductid(orderlist[i].getI);
-//            product.setNumber(orderlist[i].getNumber());
-//            product.setDate(new Date());
-//            productList.add(product);
-//        }
-//        productService.consume(productList);
-//        orderService.add(orderlist);
-//        session.setAttribute("orderid",orderService.getOrder());
-//        session.setAttribute("total",total);
-//        Map<String,Object> map = new HashMap<>();
-//        map.put("userid",userid);
-//        map.put("total",total);
-//        userService.pay(map);
-//        return "下单成功";
-//    }
-//
-//    @ResponseBody
-//    @GetMapping(value = "/refreshorder")
-//    public List<Order> refreshorder(HttpSession session){
-//        int orderid = Integer.parseInt(session.getAttribute("orderid").toString());
-//        List<Order> orderList = orderService.selectById(orderid);
-//        return orderList;
-//    }
-//
-//    @PostMapping(value = "/order_confirm")
-//    public String order_confirm(){
-//        return "确认收货";
-//    }
-//
-//    @PostMapping(value = "/order_cancel")
-//    public String order_cancel(){
-//        return "取消订单";
-//    }
+    /**
+     * 结算订单，插入新的订单信息，status=0，用户的钱转到经理账上，相关商品库存减对应值
+     * @return 下单成功
+     */
+    @ResponseBody
+    @PostMapping(value = "/pay")
+    public String pay(@RequestBody List<Map> maps,HttpSession session){
+        List<Order> orders = new ArrayList<>();
+        List<Product> products = new ArrayList<>();
+        int userid = Integer.parseInt(session.getAttribute("userid").toString());
+        int restaurantid = Integer.parseInt(session.getAttribute("restaurantid").toString());
+
+        /*
+            插入新的订单信息，status=0
+         */
+        for (int i=0;i<maps.size();i++){
+            String productname = maps.get(i).get("productname").toString();
+            Product product = new Product();
+            product.setProductname(productname);
+            product.setRestaurantid(restaurantid);
+            product = productService.selectByName(product);
+            int productid = product.getProductid();
+            Order order = new Order();
+            order.setRestaurantid(restaurantid);
+            order.setUserid(userid);
+            order.setProductid(productid);
+            Float cost = Float.parseFloat(maps.get(i).get("cost").toString());
+            int number = Integer.parseInt(maps.get(i).get("number").toString());
+            Float subtotal = Float.parseFloat(maps.get(i).get("subtotal").toString());
+            order.setCost(cost);
+            order.setNumber(number);
+            order.setSubtotal(subtotal);
+            orders.add(order);
+            product.setNumber(number);
+            products.add(product);
+        }
+        int orderid = orderService.add(orders);
+
+        /*
+            用户钱转到经理账上
+         */
+        float total = 0;
+        for (Order order : orders) {
+            total += order.getSubtotal();
+        }
+        Map<String,Object> map = new HashMap<>();
+        map.put("userid",userid);
+        map.put("total",total);
+        userService.pay(map);
+
+        Map<String,Object> map1 = new HashMap<>();
+        map1.put("orderid",orderid);
+        map1.put("total",total);
+        managerService.insert(map1);
+
+        productService.consume(products);
+
+        session.setAttribute("orderid",orderid);
+        session.setAttribute("total",total);
+        return "下单成功";
+    }
+
+    @ResponseBody
+    @GetMapping(value = "/refreshorder")
+    public List<Map> refreshorder(HttpSession session){
+        int orderid = Integer.parseInt(session.getAttribute("orderid").toString());
+        List<Order> orderList = orderService.selectById(orderid);
+        List<Map> maps = new ArrayList<>();
+        for (int i=0;i<orderList.size();i++){
+            int productid = orderList.get(i).getProductid();
+            int restaurantid = orderList.get(i).getRestaurantid();
+            String restaurantname = resService.selectById(restaurantid).getRestaurantname();
+            String productname = productService.selectById(productid).getProductname();
+            Map map = new HashMap();
+            map.put("orderid",orderid);
+            map.put("restaurantname",restaurantname);
+            map.put("productname",productname);
+            map.put("cost",orderList.get(i).getCost());
+            map.put("number",orderList.get(i).getNumber());
+            map.put("subtotal",orderList.get(i).getSubtotal());
+            maps.add(map);
+        }
+        return maps;
+    }
+
+    /**
+     * 确认收货，订单status=1，经理抽成后打进餐厅账户
+     */
+    @PostMapping(value = "/order_confirm")
+    @ResponseBody
+    public String order_confirm(HttpSession session){
+        int orderid = Integer.parseInt(session.getAttribute("orderid").toString());
+        orderService.confirm(orderid);
+
+        int restaurantid = Integer.parseInt(session.getAttribute("restaurantid").toString());
+        Float total = Float.parseFloat(session.getAttribute("total").toString());
+        float pay = total*9/10;
+        Map<String,Object> map1 = new HashMap<>();
+        map1.put("restaurantid",restaurantid);
+        map1.put("total",pay);
+        resService.pay(map1);
+
+        managerService.confirm(orderid);
+
+        session.removeAttribute("total");
+        return "确认收货";
+    }
+
+    /**
+     * 取消订单，根据时间来确定赔款策略
+     */
+    @PostMapping(value = "/order_cancel")
+    @ResponseBody
+    public String order_cancel(@RequestBody int time, HttpSession session){
+        int orderid = Integer.parseInt(session.getAttribute("orderid").toString());
+        orderService.cancel(orderid);
+
+
+
+        return "取消订单";
+    }
 }

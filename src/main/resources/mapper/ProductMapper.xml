@@ -23,4 +23,14 @@
     select * from product where restaurantid=#{restaurantid} and productname=#{productname}
 </select>
 
+<!--根据productid查询商品信息-->
+<select id="selectById" parameterType="int" resultType="Product">
+    select * from product where productid=#{productid};
+</select>
+
+<!--下单后商品就被消耗-->
+<update id="consume" parameterType="Product">
+    update product set number=#number,date=#{date} where productid=#{productid}
+</update>
+
 </mapper>

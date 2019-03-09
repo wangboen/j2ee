@@ -9,4 +9,8 @@ public interface ProductService {
     List<Product> getProList(int restaurantid);
 
     void consume(List<Product> productList);
+
+    Product selectByName(Product product);
+
+    Product selectById(int productid);
 }

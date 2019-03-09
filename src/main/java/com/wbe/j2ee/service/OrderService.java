@@ -5,7 +5,7 @@ import com.wbe.j2ee.entity.Order;
 import java.util.List;
 
 public interface OrderService {
-    void add(Order[] orders);
+    int add(List<Order> orders);
 
     int getOrder();
 

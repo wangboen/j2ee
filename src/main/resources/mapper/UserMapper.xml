@@ -47,4 +47,14 @@
     select * from user where userid=#{userid}
 </select>
 
+<!--对应userid的用户预付款达到manager账上-->
+<update id="pay" parameterType="Map">
+    update user set account=account-#{total} where userid=#{userid}
+</update>
+
+<!--取消订单，预付款退回账上-->
+<update id="cancel" parameterType="Map">
+    update user set account=account+#{total} where userid=#{userid}
+</update>
+
 </mapper>

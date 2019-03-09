@@ -83,7 +83,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void pay(Map<String, Object> map) {
+    public void pay(Map map) {
+        userDao.pay(map);
+    }
 
+    @Override
+    public void cancel(Map map) {
+        userDao.cancel(map);
     }
 }

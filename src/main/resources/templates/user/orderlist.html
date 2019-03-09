@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>历史订单列表</title>
+
+    <link rel="stylesheet" href="/css/bootstrap.css">
+
+    <script type="text/javascript" src="/js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.js"></script>
+</head>
+<body>
+<div class="container-fluid">
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">个人页面</a>
+            </div>
+            <div>
+                <ul class="nav navbar-nav">
+                    <li><a href="/user/reslist">查看餐厅列表</a></li>
+                    <li><a href="/user/orderlist">历史订单列表</a> </li>
+                    <li><a href="/user/info">查看个人信息</a></li>
+                    <li><a href="/user/modify">修改个人信息</a></li>
+                    <li></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/user/logout">退出登录</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <button class="btn btn-default" id="confirm_refresh">刷新已完成订单列表</button>
+
+    <table class="table table-bordered table-hover" id="orderlist_confirm">
+        <thead>
+        <tr>
+            <th>订单号</th>
+            <th>餐厅名</th>
+            <th>商品名</th>
+            <th>单价</th>
+            <th>数量</th>
+            <th>小计</th>
+        </tr>
+        </thead>
+        <tbody class="table-striped" id="list_confirm">
+        </tbody>
+    </table>
+
+    <button class="btn btn-default" id="cancel_refresh">刷新未完成订单列表</button>
+
+    <table class="table table-bordered table-hover" id="orderlist_cancel">
+        <thead>
+        <tr>
+            <th>订单号</th>
+            <th>餐厅名</th>
+            <th>商品名</th>
+            <th>单价</th>
+            <th>数量</th>
+            <th>小计</th>
+        </tr>
+        </thead>
+        <tbody class="table-striped" id="list_cancel">
+        </tbody>
+    </table>
+
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#confirm_refresh").click(function () {
+            $.ajax({
+                type:"get",
+                url:"/user/confirm_refresh",
+                data:{},
+                dataType:"json",
+                success:function (result) {
+                    var str="";
+                    $.each(result,function (index,item) {
+                        str +="<tr>" +
+                            "<td class='orderid'>"+item.orderid+"</td>" +
+                            "<td class='restaurantname'>"+item.restaurantname+"</td>" +
+                            "<td class='productname'>"+item.productname+"</td> " +
+                            "<td class='cost'>"+item.cost+"</td>" +
+                            "<td class='number'>"+item.number+"</td>" +
+                            "<td class='subtotal'>"+item.subtotal+"</td>" +
+                            "</tr>";
+                    })
+                    $("#list_confirm").html(str);
+                },
+                error:function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                    alert("获取已完成订单列表出错");
+                }
+            })
+        });
+
+        $("#cancel_refresh").click(function () {
+            $.ajax({
+                type:"get",
+                url:"/user/confirm_cancel",
+                data:{},
+                dataType:"json",
+                success:function (result) {
+                    var str="";
+                    $.each(result,function (index,item) {
+                        str +="<tr>" +
+                            "<td class='orderid'>"+item.orderid+"</td>" +
+                            "<td class='restaurantname'>"+item.restaurantname+"</td>" +
+                            "<td class='productname'>"+item.productname+"</td> " +
+                            "<td class='cost'>"+item.cost+"</td>" +
+                            "<td class='number'>"+item.number+"</td>" +
+                            "<td class='subtotal'>"+item.subtotal+"</td>" +
+                            "</tr>";
+                    })
+                    $("#list_cancel").html(str);
+                },
+                error:function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                    alert("获取已退订订单列表出错");
+                }
+            })
+        })
+    })
+</script>

@@ -13,11 +13,15 @@ import java.util.List;
 @Transactional
 public class OrderServiceImpl implements OrderService {
 
+    private final OrderDao orderDao;
+
     @Autowired
-    private OrderDao orderDao;
+    public OrderServiceImpl(OrderDao orderDao) {
+        this.orderDao = orderDao;
+    }
 
     @Override
-    public void add(Order[] orders) {
+    public int add(List<Order> orders) {
         int orderid = 1;
         if (orderDao.max()!=null){
             orderid = orderDao.max()+1;
@@ -26,6 +30,7 @@ public class OrderServiceImpl implements OrderService {
             order.setOrderid(orderid);
             orderDao.add(order);
         }
+        return orderid;
     }
 
     @Override

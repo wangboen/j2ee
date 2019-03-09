@@ -22,5 +22,7 @@ public interface UserService {
 
     User selectById(int userid);
 
-    void pay(Map<String,Object> map);
+    void pay(Map map);
+
+    void cancel(Map map);
 }

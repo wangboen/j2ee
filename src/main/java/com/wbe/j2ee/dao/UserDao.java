@@ -3,6 +3,8 @@ package com.wbe.j2ee.dao;
 import com.wbe.j2ee.entity.User;
 import org.springframework.stereotype.Repository;
 
+import java.util.Map;
+
 @Repository
 public interface UserDao {
     /**
@@ -49,4 +51,14 @@ public interface UserDao {
      * 根据userid查询user
      */
     User selectById(int userid);
+
+    /**
+     * 对应userid的用户预付款达到manager账上
+     */
+    void pay(Map map);
+
+    /**
+     * 取消订单，预付款退回账上
+     */
+    void cancel(Map map);
 }

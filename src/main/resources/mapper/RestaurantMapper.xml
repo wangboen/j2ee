@@ -44,7 +44,7 @@
 
 <!--经理将预付款打到餐厅账上-->
 <update id="pay" parameterType="map">
-    update restaurant set account=account+#{total} where restaurantUUID=#{restaurantUUID}
+    update restaurant set account=account+#{total} where restaurantid=#{restaurantid}
 </update>
 
 <!--根据用户所在地查找附近正在运营的餐厅-->

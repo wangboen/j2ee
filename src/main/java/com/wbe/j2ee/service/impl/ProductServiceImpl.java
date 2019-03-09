@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -42,7 +43,18 @@ public class ProductServiceImpl implements ProductService {
         for (Product product:productList){
             Product product1 = productDao.selectByName(product);
             product1.setNumber(product1.getNumber()-product.getNumber());
+            product1.setDate(new Date());
             productDao.update(product1);
         }
+    }
+
+    @Override
+    public Product selectByName(Product product) {
+        return productDao.selectByName(product);
+    }
+
+    @Override
+    public Product selectById(int productid) {
+        return productDao.selectById(productid);
     }
 }

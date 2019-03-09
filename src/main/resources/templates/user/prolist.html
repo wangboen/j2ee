@@ -20,6 +20,7 @@
             <div>
                 <ul class="nav navbar-nav">
                     <li><a href="/user/reslist">查看餐厅列表</a></li>
+                    <li><a href="/user/orderlist">历史订单列表</a> </li>
                     <li><a href="/user/info">查看个人信息</a></li>
                     <li><a href="/user/modify">修改个人信息</a></li>
                     <li></li>
@@ -100,7 +101,7 @@
                     var str = "";
                     $.each(result,function (index,item) {
                         str += "<tr id='product'>" +
-                            "<td class='name'>"+item.name+"</td>" +
+                            "<td class='productname'>"+item.productname+"</td>" +
                             "<td class='type'>"+item.type+"</td>" +
                             "<td class='cost'>"+item.cost+"</td>" +
                             "<td class='remaining'>"+item.number+"</td>" +
@@ -113,7 +114,7 @@
                             "</tr>"
                     });
                     str +="<tr id='sum'>" +
-                        "<td id='sum1' colspan='4'><span>商品总计<span id='total'>0.00</span>元</span></td>" +
+                        "<td id='sum1' colspan='5'><span>商品总计<span id='total'>0.00</span>元</span></td>" +
                         "<td id='sum2'><button class='btn btn-default' data-toggle='modal' data-target='#shopping' id='order'>下单</button></td>" +
                         "</tr>";
 
@@ -164,18 +165,18 @@
         }
     });
 
-    var time = 15;
+    var time = 30;
     $(document).on("click","button#order",function () {
 
         var str = "";
         $("tr#product").each(function () {
             var number = parseInt($(this).children("td.number").children("span.num").text());
             if (number > 0){
-                var name = $(this).children("td.name").text();
+                var productname = $(this).children("td.productname").text();
                 var cost = $(this).children("td.cost").text();
                 var subtotal = $(this).children("td.subtotal").text();
                 str += "<tr id='shopping_product'>" +
-                    "<td class='name'>"+name+"</td>" +
+                    "<td class='productname'>"+productname+"</td>" +
                     "<td class='cost'>"+cost+"</td>" +
                     "<td class='number'>"+number+"</td>" +
                     "<td class='subtotal'>"+subtotal+"</td>" +
@@ -209,7 +210,7 @@
         var productlist = [];
         $("tr#shopping_product").each(function () {
             var product = {
-                name:$(this).children("td.name").text(),
+                productname:$(this).children("td.productname").text(),
                 cost:$(this).children("td.cost").text(),
                 number:$(this).children("td.number").text(),
                 subtotal:$(this).children("td.subtotal").text()

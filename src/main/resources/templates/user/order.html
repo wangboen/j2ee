@@ -19,6 +19,7 @@
                 <div>
                     <ul class="nav navbar-nav">
                         <li><a href="/user/reslist">查看餐厅列表</a></li>
+                        <li><a href="/user/orderlist">历史订单列表</a> </li>
                         <li><a href="/user/info">查看个人信息</a></li>
                         <li><a href="/user/modify">修改个人信息</a></li>
                         <li></li>
@@ -31,11 +32,13 @@
         </nav>
 
         <button class="btn btn-default" id="refresh">刷新订单信息</button>
+        <span class="timer"></span>
 
         <table class="table table-bordered table-hover" id="order_list">
             <thead>
             <tr>
                 <th>订单号</th>
+                <th>餐厅名</th>
                 <th>商品名</th>
                 <th>单价</th>
                 <th>数量</th>
@@ -68,7 +71,8 @@
                     $.each(result,function (index,item) {
                         str +="<tr>" +
                             "<td class='orderid'>"+item.orderid+"</td>" +
-                            "<td class='name'>"+item.name+"</td>" +
+                            "<td class='restaurantname'>"+item.restaurantname+"</td>" +
+                            "<td class='productname'>"+item.productname+"</td> " +
                             "<td class='cost'>"+item.cost+"</td>" +
                             "<td class='number'>"+item.number+"</td>" +
                             "<td class='subtotal'>"+item.subtotal+"</td>" +
@@ -86,7 +90,21 @@
         });
 
         $("#refresh").trigger("click");
+
     });
+
+    var time = 120;
+    var timer = setInterval(function(){
+        if ( time >= 1) {
+            time -= 1;
+            var minute = parseInt( time / 60 );
+            var second = parseInt( time % 60 );
+            $('.timer').html( minute+':'+second );
+        } else {
+            $("#order_confirm").trigger("click");
+            clearInterval(timer);
+        }
+    }, 1000);
     
     $(document).on("click","#order_confirm",function () {
         $.ajax({
@@ -94,7 +112,8 @@
             url:"/user/order_confirm",
             data:{},
             success:function (result) {
-
+                alert(result);
+                window.location.href = "/user/orderlist";
             },
             error:function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR);
@@ -109,15 +128,16 @@
         $.ajax({
             type:"post",
             url:"/user/order_cancel",
-            data:{},
+            data:window.time,
             success:function (result) {
-
+                alert(result);
+                window.location.href = "/user/orderlist";
             },
             error:function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR);
                 console.log(textStatus);
                 console.log(errorThrown);
-                alert("确认收货出错");
+                alert("取消收货出错");
             }
         })
     })
