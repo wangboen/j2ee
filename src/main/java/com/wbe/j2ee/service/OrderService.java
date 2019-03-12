@@ -14,4 +14,12 @@ public interface OrderService {
     void confirm(int orderid);
 
     void cancel(int orderid);
+
+    List<Order> getUserOrder1(int userid);
+
+    List<Order> getUserOrder2(int userid);
+
+    List<Order> getResOrder1(int restaurantid);
+
+    List<Order> getResOrder2(int restaurantid);
 }

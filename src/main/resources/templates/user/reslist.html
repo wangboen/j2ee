@@ -10,43 +10,41 @@
     <script type="text/javascript" src="/js/bootstrap.js"></script>
 </head>
 <body>
-
-<div class="container-fluid">
-    <nav class="navbar navbar-default" role="navigation">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="#">个人页面</a>
+    <div class="container">
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">个人页面</a>
+                </div>
+                <div>
+                    <ul class="nav navbar-nav">
+                        <li><a href="/user/reslist">查看餐厅列表</a></li>
+                        <li><a href="/user/orderlist">历史订单列表</a> </li>
+                        <li><a href="/user/info">查看个人信息</a></li>
+                        <li><a href="/user/modify">修改个人信息</a></li>
+                        <li></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="/user/logout">退出登录</a></li>
+                    </ul>
+                </div>
             </div>
-            <div>
-                <ul class="nav navbar-nav">
-                    <li><a href="/user/reslist">查看餐厅列表</a></li>
-                    <li><a href="/user/orderlist">历史订单列表</a> </li>
-                    <li><a href="/user/info">查看个人信息</a></li>
-                    <li><a href="/user/modify">修改个人信息</a></li>
-                    <li></li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a href="/user/logout">退出登录</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+        </nav>
 
-    <button class="btn btn-default" id="refresh">刷新餐厅列表</button>
+        <button class="btn btn-default" id="refresh">刷新餐厅列表</button>
 
-    <table class="table table-bordered table-hover">
-        <thead>
-        <tr>
-            <th>餐厅名称</th>
-            <th>餐厅类型</th>
-            <th>餐厅地址</th>
-        </tr>
-        </thead>
-        <tbody class="table-striped" id="reslist">
-        </tbody>
-    </table>
-</div>
-
+        <table class="table table-bordered table-hover">
+            <thead>
+            <tr>
+                <th>餐厅名称</th>
+                <th>餐厅类型</th>
+                <th>餐厅地址</th>
+            </tr>
+            </thead>
+            <tbody class="table-striped" id="reslist">
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
 

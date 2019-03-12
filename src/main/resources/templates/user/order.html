@@ -10,7 +10,8 @@
     <script type="text/javascript" src="/js/bootstrap.js"></script>
 </head>
 <body>
-    <div class="container-fluid">
+    <div class="container">
+
         <nav class="navbar navbar-default" role="navigation">
             <div class="container-fluid">
                 <div class="navbar-header">
@@ -128,7 +129,8 @@
         $.ajax({
             type:"post",
             url:"/user/order_cancel",
-            data:window.time,
+            contentType:"application/json",
+            data:JSON.stringify(window.time),
             success:function (result) {
                 alert(result);
                 window.location.href = "/user/orderlist";

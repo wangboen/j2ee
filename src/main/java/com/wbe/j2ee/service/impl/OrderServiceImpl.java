@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -45,11 +48,37 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void confirm(int orderid) {
-        orderDao.confirm(orderid);
+        Map<String,Object> map = new HashMap<>();
+        map.put("orderid",orderid);
+        map.put("date",new Date());
+        orderDao.confirm(map);
     }
 
     @Override
     public void cancel(int orderid) {
-        orderDao.cancel(orderid);
+        Map<String,Object> map = new HashMap<>();
+        map.put("orderid",orderid);
+        map.put("date",new Date());
+        orderDao.cancel(map);
+    }
+
+    @Override
+    public List<Order> getUserOrder1(int userid) {
+        return orderDao.getUserOrder1(userid);
+    }
+
+    @Override
+    public List<Order> getUserOrder2(int userid) {
+        return orderDao.getUserOrder2(userid);
+    }
+
+    @Override
+    public List<Order> getResOrder1(int restaurantid) {
+        return orderDao.getResOrder1(restaurantid);
+    }
+
+    @Override
+    public List<Order> getResOrder2(int restaurantid) {
+        return orderDao.getResOrder2(restaurantid);
     }
 }

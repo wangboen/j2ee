@@ -6,11 +6,13 @@
 
     <link rel="stylesheet" href="/css/bootstrap.css">
 
-    <script type="text/javascript" src="/js/jquery-3.3.1.js"></script>
-    <script type="text/javascript" src="/js/bootstrap.js"></script>
+    <script src="/js/jquery-3.3.1.js"></script>
+    <script src="/js/bootstrap.js"></script>
+    <script src="https://gw.alipayobjects.com/os/antv/pkg/_antv.g2-3.4.1/dist/g2.min.js"></script>
+    <script src="https://gw.alipayobjects.com/os/antv/pkg/_antv.data-set-0.10.1/dist/data-set.min.js"></script>
 </head>
 <body>
-<div class="container-fluid">
+<div class="container">
     <nav class="navbar navbar-default" role="navigation">
         <div class="container-fluid">
             <div class="navbar-header">
@@ -39,9 +41,9 @@
             <th>订单号</th>
             <th>餐厅名</th>
             <th>商品名</th>
-            <th>单价</th>
             <th>数量</th>
             <th>小计</th>
+            <th>订单时间</th>
         </tr>
         </thead>
         <tbody class="table-striped" id="list_confirm">
@@ -56,14 +58,83 @@
             <th>订单号</th>
             <th>餐厅名</th>
             <th>商品名</th>
-            <th>单价</th>
             <th>数量</th>
             <th>小计</th>
+            <th>订单时间</th>
         </tr>
         </thead>
         <tbody class="table-striped" id="list_cancel">
         </tbody>
     </table>
+
+    <div id="timeChart"></div>
+
+    <script>
+        $.ajax({
+            type:"get",
+            url:"/user/timeChart",
+            data:{},
+            success:function (result) {
+                var data = [{
+                    month:'Jan',
+                    total:result.Jan
+                },{
+                    month:'Feb',
+                    total:result.Feb
+                },{
+                    month:'Mar',
+                    total:result.Mar
+                }, {
+                    month: 'Apr',
+                    total: result.Apr
+                },{
+                    month:'May',
+                    total:result.May
+                },{
+                    month:'Jun',
+                    total:result.Jun
+                },{
+                    month:'Jul',
+                    total:result.Jul
+                },{
+                    month:'Aug',
+                    total:result.Aug
+                },{
+                    month:'Sep',
+                    total:result.Sep
+                },{
+                    month:'Oct',
+                    total:result.Oct
+                },{
+                    month:'Nov',
+                    total:result.Nov
+                },{
+                    month:'Dec',
+                    total:result.Dec
+                }];
+                console.log(data);
+                var timeChart = new G2.Chart({
+                    container: 'timeChart',
+                    forceFit: true,
+                    height: window.innerHeight
+                });
+                timeChart.source(data);
+                timeChart.scale('total', {
+                    tickInterval: 10.0
+                });
+                timeChart.interval().position('month*total');
+                timeChart.render();
+            },
+            error:function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
+                alert("获取时间柱状图出错");
+            }
+        });
+
+
+    </script>
 
 </div>
 </body>
@@ -71,7 +142,12 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $("#confirm_refresh").click(function () {
+        var confirm_refresh = $("#confirm_refresh");
+        var cancel_refresh = $("#cancel_refresh");
+        var list_confirm = $("#list_confirm");
+        var list_cancel = $("#list_cancel");
+
+        confirm_refresh.click(function () {
             $.ajax({
                 type:"get",
                 url:"/user/confirm_refresh",
@@ -79,17 +155,24 @@
                 dataType:"json",
                 success:function (result) {
                     var str="";
+                    var orderid = 0;
                     $.each(result,function (index,item) {
+                        if (orderid!==item.orderid){
+                            if (orderid!==0) {
+                                str += "<tr><td colspan='6'></td></tr>";
+                            }
+                            orderid = item.orderid;
+                        }
                         str +="<tr>" +
                             "<td class='orderid'>"+item.orderid+"</td>" +
                             "<td class='restaurantname'>"+item.restaurantname+"</td>" +
-                            "<td class='productname'>"+item.productname+"</td> " +
-                            "<td class='cost'>"+item.cost+"</td>" +
+                            "<td class='productname'>"+item.productname+"</td>" +
                             "<td class='number'>"+item.number+"</td>" +
                             "<td class='subtotal'>"+item.subtotal+"</td>" +
+                            "<td class='date'>"+item.date+"</td>" +
                             "</tr>";
-                    })
-                    $("#list_confirm").html(str);
+                    });
+                    list_confirm.html(str);
                 },
                 error:function (jqXHR, textStatus, errorThrown) {
                     console.log(jqXHR);
@@ -100,25 +183,32 @@
             })
         });
 
-        $("#cancel_refresh").click(function () {
+        cancel_refresh.click(function () {
             $.ajax({
                 type:"get",
-                url:"/user/confirm_cancel",
+                url:"/user/cancel_refresh",
                 data:{},
                 dataType:"json",
                 success:function (result) {
                     var str="";
+                    var orderid = 0;
                     $.each(result,function (index,item) {
+                        if (orderid!==item.orderid){
+                            if (orderid!==0) {
+                                str += "<tr><td colspan='6'></td></tr>";
+                            }
+                            orderid = item.orderid;
+                        }
                         str +="<tr>" +
                             "<td class='orderid'>"+item.orderid+"</td>" +
                             "<td class='restaurantname'>"+item.restaurantname+"</td>" +
-                            "<td class='productname'>"+item.productname+"</td> " +
-                            "<td class='cost'>"+item.cost+"</td>" +
+                            "<td class='productname'>"+item.productname+"</td>" +
                             "<td class='number'>"+item.number+"</td>" +
                             "<td class='subtotal'>"+item.subtotal+"</td>" +
+                            "<td class='date'>"+item.date+"</td>" +
                             "</tr>";
-                    })
-                    $("#list_cancel").html(str);
+                    });
+                    list_cancel.html(str);
                 },
                 error:function (jqXHR, textStatus, errorThrown) {
                     console.log(jqXHR);
@@ -127,6 +217,10 @@
                     alert("获取已退订订单列表出错");
                 }
             })
-        })
+        });
+
+        confirm_refresh.trigger("click");
+        cancel_refresh.trigger("click");
     })
+
 </script>

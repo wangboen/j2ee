@@ -50,7 +50,7 @@ public class ManagerServiceImpl implements ManagerService {
     @Override
     public void cancel(int orderid) {
         float total = managerDao.selectByOrder(orderid);
-        total = -total;
+        total = 0-total;
         float account = managerDao.account() +total;
         Map map = new HashMap();
         map.put("orderid",orderid);

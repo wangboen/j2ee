@@ -1,5 +1,7 @@
 package com.wbe.j2ee.entity;
 
+import java.util.Date;
+
 public class Order {
     private int id;
     private int orderid;
@@ -10,6 +12,7 @@ public class Order {
     private Float cost;
     private Float subtotal;
     private int status;
+    private Date date;
 
     public int getId() {
         return id;
@@ -81,5 +84,13 @@ public class Order {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 }

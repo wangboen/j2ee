@@ -2,6 +2,7 @@ package com.wbe.j2ee.dao;
 
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Map;
 
 @Repository

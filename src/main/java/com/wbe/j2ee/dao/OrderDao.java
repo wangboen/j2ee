@@ -4,6 +4,7 @@ import com.wbe.j2ee.entity.Order;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface OrderDao {
@@ -25,10 +26,30 @@ public interface OrderDao {
     /**
      * 确认订单送达
      */
-    void confirm(int orderid);
+    void confirm(Map<String,Object> map);
 
     /**
      * 取消订单
      */
-    void cancel(int orderid);
+    void cancel(Map<String,Object> map);
+
+    /**
+     * 获取用户已完成订单列表
+     */
+    List<Order> getUserOrder1(int userid);
+
+    /**
+     * 获取用户已退订订单列表
+     */
+    List<Order> getUserOrder2(int userid);
+
+    /**
+     * 获取餐馆已配送订单列表
+     */
+    List<Order> getResOrder1(int restaurantid);
+
+    /**
+     * 获取餐厅遭退订订单列表
+     */
+    List<Order> getResOrder2(int restaurantid);
 }

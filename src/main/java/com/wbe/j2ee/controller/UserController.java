@@ -1,5 +1,6 @@
 package com.wbe.j2ee.controller;
 
+import com.sun.org.apache.xpath.internal.operations.Or;
 import com.wbe.j2ee.common.UUIDUtils;
 import com.wbe.j2ee.entity.Order;
 import com.wbe.j2ee.entity.Product;
@@ -282,6 +283,7 @@ public class UserController {
             order.setRestaurantid(restaurantid);
             order.setUserid(userid);
             order.setProductid(productid);
+            order.setDate(new Date());
             Float cost = Float.parseFloat(maps.get(i).get("cost").toString());
             int number = Integer.parseInt(maps.get(i).get("number").toString());
             Float subtotal = Float.parseFloat(maps.get(i).get("subtotal").toString());
@@ -353,10 +355,10 @@ public class UserController {
         int restaurantid = Integer.parseInt(session.getAttribute("restaurantid").toString());
         Float total = Float.parseFloat(session.getAttribute("total").toString());
         float pay = total*9/10;
-        Map<String,Object> map1 = new HashMap<>();
-        map1.put("restaurantid",restaurantid);
-        map1.put("total",pay);
-        resService.pay(map1);
+        Map<String,Object> map = new HashMap<>();
+        map.put("restaurantid",restaurantid);
+        map.put("total",pay);
+        resService.pay(map);
 
         managerService.confirm(orderid);
 
@@ -373,8 +375,153 @@ public class UserController {
         int orderid = Integer.parseInt(session.getAttribute("orderid").toString());
         orderService.cancel(orderid);
 
+        int userid = Integer.parseInt(session.getAttribute("userid").toString());
+        int restaurantid = Integer.parseInt(session.getAttribute("restaurantid").toString());
+        Float total = Float.parseFloat(session.getAttribute("total").toString());
+        Map<String,Object> map = new HashMap<>();
+        map.put("userid",userid);
+        map.put("restaurantid",restaurantid);
+        map.put("total",total);
+        if (time>90){
+            userService.cancel(map);
+        }else {
+            resService.pay(map);
+        }
 
+        managerService.cancel(orderid);
 
         return "取消订单";
+    }
+
+    @GetMapping(value = "/confirm_refresh")
+    @ResponseBody
+    public List<Map> confirm_refresh(HttpSession session){
+        List<Map> maps = new ArrayList<>();
+        int userid = Integer.parseInt(session.getAttribute("userid").toString());
+        List<Order> orders = orderService.getUserOrder1(userid);
+        for (Order order : orders) {
+            int orderid = order.getOrderid();
+            int restaurantid = order.getRestaurantid();
+            int productid = order.getProductid();
+            String restaurantname = resService.selectById(restaurantid).getRestaurantname();
+            String productname = productService.selectById(productid).getProductname();
+            Float cost = order.getCost();
+            int number = order.getNumber();
+            Float subtotal = order.getSubtotal();
+            Date date = order.getDate();
+            Map<String,Object> map = new HashMap<>();
+            map.put("orderid",orderid);
+            map.put("restaurantname",restaurantname);
+            map.put("productname",productname);
+            map.put("number",number);
+            map.put("subtotal",subtotal);
+            map.put("date",date);
+            maps.add(map);
+        }
+
+        return maps;
+    }
+
+    @GetMapping(value = "/cancel_refresh")
+    @ResponseBody
+    public List<Map> cancel_refresh(HttpSession session){
+        List<Map> maps = new ArrayList<>();
+        int userid = Integer.parseInt(session.getAttribute("userid").toString());
+        List<Order> orders = orderService.getUserOrder2(userid);
+        for (Order order : orders) {
+            int orderid = order.getOrderid();
+            int restaurantid = order.getRestaurantid();
+            int productid = order.getProductid();
+            String restaurantname = resService.selectById(restaurantid).getRestaurantname();
+            String productname = productService.selectById(productid).getProductname();
+            Float cost = order.getCost();
+            int number = order.getNumber();
+            Float subtotal = order.getSubtotal();
+            Date date = order.getDate();
+            Map<String,Object> map = new HashMap<>();
+            map.put("orderid",orderid);
+            map.put("restaurantname",restaurantname);
+            map.put("productname",productname);
+            map.put("number",number);
+            map.put("subtotal",subtotal);
+            map.put("date",date);
+            maps.add(map);
+        }
+
+        return maps;
+    }
+
+    @GetMapping(value = "/timeChart")
+    @ResponseBody
+    public Map timeChart(HttpSession session){
+        int userid = Integer.parseInt(session.getAttribute("userid").toString());
+        List<Order> orders = orderService.getUserOrder1(userid);
+        Map<String,Float> map = new HashMap<>();
+        map.put("Jan",0.00f);
+        map.put("Feb",0.00f);
+        map.put("Mar",0.00f);
+        map.put("Apr",0.00f);
+        map.put("May",0.00f);
+        map.put("Jun",0.00f);
+        map.put("Jul",0.00f);
+        map.put("Aug",0.00f);
+        map.put("Sep",0.00f);
+        map.put("Oct",0.00f);
+        map.put("Nov",0.00f);
+        map.put("Dec",0.00f);
+        for (Order order : orders) {
+            Date date = order.getDate();
+            Float subtotal = order.getSubtotal();
+            if (date.getMonth()==0){
+                Float total = map.get("Jan");
+                total +=subtotal;
+                map.put("Jan",total);
+            }else if (date.getMonth()==1){
+                Float total = map.get("Feb");
+                total +=subtotal;
+                map.put("Feb",total);
+            }else if (date.getMonth()==2){
+                Float total = map.get("Mar");
+                total +=subtotal;
+                map.put("Mar",total);
+            }else if (date.getMonth()==3){
+                Float total = map.get("Apr");
+                total +=subtotal;
+                map.put("Apr",total);
+            }else if (date.getMonth()==4){
+                Float total = map.get("May");
+                total +=subtotal;
+                map.put("May",total);
+            }else if (date.getMonth()==5){
+                Float total = map.get("Jun");
+                total +=subtotal;
+                map.put("Jun",total);
+            }else if (date.getMonth()==6){
+                Float total = map.get("Jul");
+                total +=subtotal;
+                map.put("Jul",total);
+            }else if (date.getMonth()==7){
+                Float total = map.get("Aug");
+                total +=subtotal;
+                map.put("Aug",total);
+            }else if (date.getMonth()==8){
+                Float total = map.get("Sep");
+                total +=subtotal;
+                map.put("Sep",total);
+            }else if (date.getMonth()==9){
+                Float total = map.get("Oct");
+                total +=subtotal;
+                map.put("Oct",total);
+            }else if (date.getMonth()==10){
+                Float total = map.get("Nov");
+                total +=subtotal;
+                map.put("Nov",total);
+            }else if (date.getMonth()==11){
+                Float total = map.get("Dec");
+                total +=subtotal;
+                map.put("Dec",total);
+            }
+        }
+        return map;
     }
 }
