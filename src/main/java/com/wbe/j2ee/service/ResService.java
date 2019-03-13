@@ -23,4 +23,6 @@ public interface ResService {
     void pay(Map<String,Object> map);
 
     List<Restaurant> searchByAdress(String address);
+
+    int count();
 }

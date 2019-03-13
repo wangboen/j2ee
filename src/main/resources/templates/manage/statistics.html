@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>统计信息</title>
+
+    <link rel="stylesheet" href="/css/bootstrap.css">
+
+    <script type="text/javascript" src="/js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.js"></script>
+</head>
+<body>
+<div class="container-fluid">
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">管理页面</a>
+            </div>
+            <div>
+                <ul class="nav navbar-nav">
+                    <li><a href="/manage/list">查看待审核修改餐厅列表</a></li>
+                    <li><a href="/manage/statistics">统计信息</a> </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div id="user"></div>
+
+    <div id="res"></div>
+
+
+</div>
+
+</body>
+</html>
+
+<script type="text/javascript">
+    $.ajax({
+        type:"get",
+        url:"/manage/count",
+        data:{},
+        success:function (result) {
+            $("#user").html("活跃用户人数："+result.user);
+            $("#res").html("可营业餐厅数量："+result.res);
+        },
+        error:function (jqXHR, textStatus, errorThrown) {
+            alert(XMLHttpRequest.status);
+            alert(XMLHttpRequest.readyState);
+            alert("计数出错");
+        }
+    })
+
+</script>

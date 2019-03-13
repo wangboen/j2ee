@@ -52,6 +52,11 @@
     select * from restaurant where address like concat('%',#{address},'%') and status=1
 </select>
 
+<!--统计总共有多少可营业餐厅-->
+<select id="count" resultType="int">
+    select count(*) from restaurant where status=1
+</select>
+
 </mapper>
     
     

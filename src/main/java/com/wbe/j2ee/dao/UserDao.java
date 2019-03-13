@@ -61,4 +61,14 @@ public interface UserDao {
      * 取消订单，预付款退回账上
      */
     void cancel(Map map);
+
+    /**
+     * 刷新用户的VIP等级
+     */
+    void updateVIP(Map<String,Object> map);
+
+    /**
+     * 统计总共有多少活跃用户
+     */
+    int count();
 }

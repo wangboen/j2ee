@@ -3,8 +3,283 @@
 <head>
     <meta charset="UTF-8">
     <title>餐厅送餐订单列表</title>
+
+    <link rel="stylesheet" href="/css/bootstrap.css">
+
+    <script src="/js/jquery-3.3.1.js"></script>
+    <script src="/js/bootstrap.js"></script>
+    <script src="https://gw.alipayobjects.com/os/antv/pkg/_antv.g2-3.4.1/dist/g2.min.js"></script>
+    <script src="https://gw.alipayobjects.com/os/antv/pkg/_antv.data-set-0.10.1/dist/data-set.min.js"></script>
 </head>
 <body>
 
+<div class="container-fluid">
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">餐厅页面</a>
+            </div>
+            <div>
+                <ul class="nav navbar-nav">
+                    <li><a href="/res/release">发布商品</a></li>
+                    <li><a href="/res/orderlist">历史订单列表</a></li>
+                    <li><a href="/res/info">查看餐厅信息</a></li>
+                    <li><a href="/res/modify">修改餐厅信息</a></li>
+                    <li></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/res/logout">退出登录</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <button class="btn btn-default" id="confirm_refresh">刷新已完成订单列表</button>
+
+    <table class="table table-bordered table-hover" id="orderlist_confirm">
+        <thead>
+        <tr>
+            <th>订单号</th>
+            <th>用户名</th>
+            <th>商品名</th>
+            <th>数量</th>
+            <th>小计</th>
+            <th>订单时间</th>
+        </tr>
+        </thead>
+        <tbody class="table-striped" id="list_confirm">
+        </tbody>
+    </table>
+
+    <button class="btn btn-default" id="cancel_refresh">刷新未完成订单列表</button>
+
+    <table class="table table-bordered table-hover" id="orderlist_cancel">
+        <thead>
+        <tr>
+            <th>订单号</th>
+            <th>用户名</th>
+            <th>商品名</th>
+            <th>数量</th>
+            <th>小计</th>
+            <th>订单时间</th>
+        </tr>
+        </thead>
+        <tbody class="table-striped" id="list_cancel">
+        </tbody>
+    </table>
+
+    <div id="timeChart"></div>
+
+    <div id="typeChart"></div>
+
+    <script>
+        $.ajax({
+            type:"get",
+            url:"/res/timeChart",
+            data:{},
+            success:function (result) {
+                var data = [{
+                    month:'Jan',
+                    total:result.Jan
+                },{
+                    month:'Feb',
+                    total:result.Feb
+                },{
+                    month:'Mar',
+                    total:result.Mar
+                }, {
+                    month: 'Apr',
+                    total: result.Apr
+                },{
+                    month:'May',
+                    total:result.May
+                },{
+                    month:'Jun',
+                    total:result.Jun
+                },{
+                    month:'Jul',
+                    total:result.Jul
+                },{
+                    month:'Aug',
+                    total:result.Aug
+                },{
+                    month:'Sep',
+                    total:result.Sep
+                },{
+                    month:'Oct',
+                    total:result.Oct
+                },{
+                    month:'Nov',
+                    total:result.Nov
+                },{
+                    month:'Dec',
+                    total:result.Dec
+                }];
+                console.log(data);
+                var timeChart = new G2.Chart({
+                    container: 'timeChart',
+                    forceFit: true,
+                    height: window.innerHeight
+                });
+                timeChart.source(data);
+                timeChart.scale('total', {
+                    tickInterval: 10.0
+                });
+                timeChart.interval().position('month*total');
+                timeChart.render();
+            },
+            error:function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
+                alert("获取时间柱状图出错");
+            }
+        });
+
+        $.ajax({
+            type:"get",
+            url:"/res/typeChart",
+            data:{},
+            success:function (result) {
+                var data = [{
+                    type:"主食",
+                    percent:result.meal
+                },{
+                    type:"菜品",
+                    percent:result.dish
+                }];
+                console.log(data);
+                var chart = new G2.Chart({
+                    container: 'typeChart',
+                    forceFit: true,
+                    height: window.innerHeight
+                });
+                chart.source(data, {
+                    percent: {
+                        formatter: function formatter(val) {
+                            val = val * 100 + '%';
+                            return val;
+                        }
+                    }
+                });
+                chart.coord('theta', {
+                    radius: 0.75
+                });
+                chart.tooltip({
+                    showTitle: false,
+                    itemTpl: '<li><span style="background-color:{color};" class="g2-tooltip-marker"></span>{name}: {value}</li>'
+                });
+                chart.intervalStack().position('percent').color('type').label('percent', {
+                    formatter: function formatter(val, type) {
+                        return type.point.type + ': ' + val;
+                    }
+                }).tooltip('type*percent', function(type, percent) {
+                    percent = percent * 100 + '%';
+                    return {
+                        name: type,
+                        value: percent
+                    };
+                }).style({
+                    lineWidth: 1,
+                    stroke: '#fff'
+                });
+                chart.render();
+
+            },
+            error:function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
+                alert("获取类型圆图出错");
+            }
+        })
+    </script>
+
+</div>
+
 </body>
 </html>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var confirm_refresh = $("#confirm_refresh");
+        var cancel_refresh = $("#cancel_refresh");
+        var list_confirm = $("#list_confirm");
+        var list_cancel = $("#list_cancel");
+
+        confirm_refresh.click(function () {
+            $.ajax({
+                type:"get",
+                url:"/res/confirm_refresh",
+                data:{},
+                dataType:"json",
+                success:function (result) {
+                    var str="";
+                    var orderid = 0;
+                    $.each(result,function (index,item) {
+                        if (orderid!==item.orderid){
+                            if (orderid!==0) {
+                                str += "<tr><td colspan='6'></td></tr>";
+                            }
+                            orderid = item.orderid;
+                        }
+                        str +="<tr>" +
+                            "<td class='orderid'>"+item.orderid+"</td>" +
+                            "<td class='username'>"+item.username+"</td>" +
+                            "<td class='productname'>"+item.productname+"</td>" +
+                            "<td class='number'>"+item.number+"</td>" +
+                            "<td class='subtotal'>"+item.subtotal+"</td>" +
+                            "<td class='date'>"+item.date+"</td>" +
+                            "</tr>";
+                    });
+                    list_confirm.html(str);
+                },
+                error:function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                    alert("获取已完成订单列表出错");
+                }
+            })
+        });
+
+        cancel_refresh.click(function () {
+            $.ajax({
+                type:"get",
+                url:"/res/cancel_refresh",
+                data:{},
+                dataType:"json",
+                success:function (result) {
+                    var str="";
+                    var orderid = 0;
+                    $.each(result,function (index,item) {
+                        if (orderid!==item.orderid){
+                            if (orderid!==0) {
+                                str += "<tr><td colspan='6'></td></tr>";
+                            }
+                            orderid = item.orderid;
+                        }
+                        str +="<tr>" +
+                            "<td class='orderid'>"+item.orderid+"</td>" +
+                            "<td class='username'>"+item.username+"</td>" +
+                            "<td class='productname'>"+item.productname+"</td>" +
+                            "<td class='number'>"+item.number+"</td>" +
+                            "<td class='subtotal'>"+item.subtotal+"</td>" +
+                            "<td class='date'>"+item.date+"</td>" +
+                            "</tr>";
+                    });
+                    list_cancel.html(str);
+                },
+                error:function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                    alert("获取已退订订单列表出错");
+                }
+            })
+        });
+
+        confirm_refresh.trigger("click");
+        cancel_refresh.trigger("click");
+    })
+</script>

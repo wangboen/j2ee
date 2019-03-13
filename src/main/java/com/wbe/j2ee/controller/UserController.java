@@ -12,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.nio.channels.FileLock;
+import java.text.DecimalFormat;
 import java.util.*;
 
 @Controller
@@ -258,6 +260,18 @@ public class UserController {
     }
 
     /**
+     * 返回用户vip等级，决定折扣
+     */
+    @ResponseBody
+    @GetMapping(value = "/getVIP")
+    public int getVIP(HttpSession session){
+        int vip = Integer.parseInt(session.getAttribute("vip").toString());
+        Map<String,Integer> map = new HashMap<>();
+        map.put("vip",vip);
+        return vip;
+    }
+
+    /**
      * 结算订单，插入新的订单信息，status=0，用户的钱转到经理账上，相关商品库存减对应值
      * @return 下单成功
      */
@@ -326,18 +340,18 @@ public class UserController {
         int orderid = Integer.parseInt(session.getAttribute("orderid").toString());
         List<Order> orderList = orderService.selectById(orderid);
         List<Map> maps = new ArrayList<>();
-        for (int i=0;i<orderList.size();i++){
-            int productid = orderList.get(i).getProductid();
-            int restaurantid = orderList.get(i).getRestaurantid();
+        for (Order order : orderList) {
+            int productid = order.getProductid();
+            int restaurantid = order.getRestaurantid();
             String restaurantname = resService.selectById(restaurantid).getRestaurantname();
             String productname = productService.selectById(productid).getProductname();
-            Map map = new HashMap();
-            map.put("orderid",orderid);
-            map.put("restaurantname",restaurantname);
-            map.put("productname",productname);
-            map.put("cost",orderList.get(i).getCost());
-            map.put("number",orderList.get(i).getNumber());
-            map.put("subtotal",orderList.get(i).getSubtotal());
+            Map<String,Object> map = new HashMap<>();
+            map.put("orderid", orderid);
+            map.put("restaurantname", restaurantname);
+            map.put("productname", productname);
+            map.put("cost", order.getCost());
+            map.put("number", order.getNumber());
+            map.put("subtotal", order.getSubtotal());
             maps.add(map);
         }
         return maps;
@@ -363,6 +377,22 @@ public class UserController {
         managerService.confirm(orderid);
 
         session.removeAttribute("total");
+
+        int userid = Integer.parseInt(session.getAttribute("userid").toString());
+        List<Order> orders = orderService.getUserOrder1(userid);
+        total = 0.00f;
+        Map<String,Object> map1 = new HashMap<>();
+        map1.put("userid",userid);
+        for (Order order : orders) {
+            total += order.getSubtotal();
+        }
+        if (total<50){
+            map1.put("vip",0);
+        }else {
+            map1.put("vip",1);
+        }
+        userService.updateVIP(map1);
+        session.setAttribute("vip",map1.get("vip"));
         return "确认收货";
     }
 
@@ -405,7 +435,6 @@ public class UserController {
             int productid = order.getProductid();
             String restaurantname = resService.selectById(restaurantid).getRestaurantname();
             String productname = productService.selectById(productid).getProductname();
-            Float cost = order.getCost();
             int number = order.getNumber();
             Float subtotal = order.getSubtotal();
             Date date = order.getDate();
@@ -418,7 +447,6 @@ public class UserController {
             map.put("date",date);
             maps.add(map);
         }
-
         return maps;
     }
 
@@ -434,7 +462,6 @@ public class UserController {
             int productid = order.getProductid();
             String restaurantname = resService.selectById(restaurantid).getRestaurantname();
             String productname = productService.selectById(productid).getProductname();
-            Float cost = order.getCost();
             int number = order.getNumber();
             Float subtotal = order.getSubtotal();
             Date date = order.getDate();
@@ -447,7 +474,6 @@ public class UserController {
             map.put("date",date);
             maps.add(map);
         }
-
         return maps;
     }
 
@@ -522,6 +548,38 @@ public class UserController {
                 map.put("Dec",total);
             }
         }
+        return map;
+    }
+
+    @GetMapping(value = "/typeChart")
+    @ResponseBody
+    public Map typeChart(HttpSession session){
+        int userid = Integer.parseInt(session.getAttribute("userid").toString());
+        List<Order> orders = orderService.getUserOrder1(userid);
+        Map<String,Float> map = new HashMap<>();
+        map.put("meal",0.00f);
+        map.put("dish",0.00f);
+        for (Order order : orders){
+            Product product = productService.selectById(order.getProductid());
+            String type = product.getType();
+            Float subtotal = order.getSubtotal();
+            if (type.equals("主食")){
+                Float total = map.get("meal");
+                total += subtotal;
+                map.put("meal",total);
+            }else if (type.equals("菜品")){
+                Float total = map.get("dish");
+                total += subtotal;
+                map.put("dish",total);
+            }
+        }
+        Float sum1 = map.get("meal");
+        Float sum2 = map.get("dish");
+        DecimalFormat decimalFormat = new DecimalFormat("###.00");
+        Float percent1 = Float.parseFloat(decimalFormat.format(sum1/(sum1+sum2)));
+        Float percetn2 = Float.parseFloat(decimalFormat.format(sum2/(sum1+sum2)));
+        map.put("meal",percent1);
+        map.put("dish",percetn2);
         return map;
     }
 }

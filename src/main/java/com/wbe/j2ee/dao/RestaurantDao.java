@@ -54,7 +54,11 @@ public interface RestaurantDao {
 
     /**
      * 根据用户所在地查找附近正在运营的餐厅
-     * @return
      */
     List<Restaurant> searchByAdress(String address);
+
+    /**
+     * 统计总共有多少可营业餐厅
+     */
+    int count();
 }

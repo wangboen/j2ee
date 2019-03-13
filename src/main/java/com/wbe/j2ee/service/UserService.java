@@ -25,4 +25,8 @@ public interface UserService {
     void pay(Map map);
 
     void cancel(Map map);
+
+    void updateVIP(Map map);
+
+    int count();
 }

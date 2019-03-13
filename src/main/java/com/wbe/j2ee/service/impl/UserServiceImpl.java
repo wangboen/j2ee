@@ -91,4 +91,14 @@ public class UserServiceImpl implements UserService {
     public void cancel(Map map) {
         userDao.cancel(map);
     }
+
+    @Override
+    public void updateVIP(Map map) {
+        userDao.updateVIP(map);
+    }
+
+    @Override
+    public int count() {
+        return userDao.count();
+    }
 }

@@ -81,4 +81,9 @@ public class ResServiceImpl implements ResService {
         if (restaurantList != null) return restaurantList;
         return null;
     }
+
+    @Override
+    public int count() {
+        return restaurantDao.count();
+    }
 }

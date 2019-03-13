@@ -57,4 +57,14 @@
     update user set account=account+#{total} where userid=#{userid}
 </update>
 
+<!--刷新用户的VIP等级-->
+<update id="updateVIP" parameterType="Map">
+    update user set vip=#{vip} where userid=#{userid}
+</update>
+
+<!--统计总共有多少活跃用户-->
+<select id="count" resultType="int">
+    select count(*) from user where status=1
+</select>
+
 </mapper>

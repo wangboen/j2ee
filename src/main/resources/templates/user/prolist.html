@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>餐厅商品页面</title>
@@ -31,6 +31,8 @@
                 </div>
             </div>
         </nav>
+
+        <h3 th:text="'vip'+${session.vip}"></h3>
 
         <button class="btn btn-default" id="refresh">刷新商品列表</button>
 
@@ -89,7 +91,25 @@
 </html>
 
 <script type="text/javascript">
+    var discount = 1;
     $(document).ready(function () {
+        $.ajax({
+            type:"get",
+            url:"/user/getVIP",
+            data:{},
+            success:function (result) {
+                if (result === 1) {
+                    discount = 0.9;
+                }
+            },
+            error:function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
+                alert("获取用户vip等级出错");
+            }
+        });
+
         $("#refresh").click(function () {
             $.ajax({
                 type:"get",
@@ -138,7 +158,7 @@
         if (num<remaining){
             num++;
             var cost = parseFloat($(this).parents("tr").children("td.cost").text());
-            var subtotal = num*cost;
+            var subtotal = num*cost*discount;
             var sum = parseFloat($(this).parents("tbody").children("tr#sum").children("td#sum1").children("span").children("span#total").text());
             subtotal = subtotal.toFixed(2);
             sum += cost;
@@ -154,7 +174,7 @@
         if(num>0){
             num--;
             var cost = parseFloat($(this).parents("tr").children("td.cost").text());
-            var subtotal = num*cost;
+            var subtotal = num*cost*discount;
             var sum = parseFloat($(this).parents("tbody").children("tr#sum").children("td#sum1").children("span").children("span#total").text());
             subtotal = subtotal.toFixed(2);
             sum -= cost;
