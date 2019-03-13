@@ -59,4 +59,9 @@ public class ManagerServiceImpl implements ManagerService {
         map.put("date",new Date());
         managerDao.insert(map);
     }
+
+    @Override
+    public Float max() {
+        return managerDao.max();
+    }
 }

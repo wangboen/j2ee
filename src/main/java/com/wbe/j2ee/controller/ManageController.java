@@ -1,6 +1,7 @@
 package com.wbe.j2ee.controller;
 
 import com.wbe.j2ee.entity.Restaurant;
+import com.wbe.j2ee.service.ManagerService;
 import com.wbe.j2ee.service.ResService;
 import com.wbe.j2ee.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ public class ManageController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ManagerService managerService;
 
     @RequestMapping(value = "/list")
     public String test(){
@@ -44,12 +48,14 @@ public class ManageController {
 
     @GetMapping(value = "/count")
     @ResponseBody
-    public Map<String,Integer> count(){
-        Map<String,Integer> map = new HashMap<>();
+    public Map<String,Object> count(){
+        Map<String,Object> map = new HashMap<>();
         int user_number = userService.count();
         int res_number = resService.count();
+        Float account = managerService.max();
         map.put("user",user_number);
         map.put("res",res_number);
+        map.put("account",account);
         return map;
     }
 }

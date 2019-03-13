@@ -8,4 +8,6 @@ public interface ManagerService {
     void confirm(int orderid);
 
     void cancel(int orderid);
+
+    Float max();
 }
